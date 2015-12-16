@@ -1,0 +1,21 @@
+package DynamicFlink;
+public class csv1POJO1446505713703{
+String latitude;
+public void setLatitude(String latitude) { this.latitude = latitude; }
+public String getLatitude() { return this.latitude; }
+String longitude;
+public void setLongitude(String longitude) { this.longitude = longitude; }
+public String getLongitude() { return this.longitude; }
+String cityname;
+public void setCityname(String cityname) { this.cityname = cityname; }
+public String getCityname() { return this.cityname; }
+String country;
+public void setCountry(String country) { this.country = country; }
+public String getCountry() { return this.country; }
+String id;
+public void setId(String id) { this.id = id; }
+public String getId() { return this.id; }
+String iddue;
+public void setIddue(String iddue) { this.iddue = iddue; }
+public String getIddue() { return this.iddue; }
+}

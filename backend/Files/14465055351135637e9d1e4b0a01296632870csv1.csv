@@ -1,0 +1,6 @@
+latitude(numeric),longitude(numeric),city_name(string),country(string),id(numeric),iddue(numeric),idtre(numeric),idquattro(numeric),altro(string),spec(string)
+34.343219,134.881087,Sumoto,Japan,1,2,3,4,aa,bb
+36.510591,137.920968,Omachi,Japan,11,12,13,14,aa,bb
+35.00953,132.21743,Gotsu,Japan,21,22,23,24,aa,bb
+43.77063,142.364807,Asahikawa,Japan,31,32,33,34,aa,bb
+
