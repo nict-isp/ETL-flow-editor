@@ -1,0 +1,30 @@
+  <script type="text/ng-template" id="openWorkflows.modal.html">
+	 <div class="modal fade">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" ng-click="close('Cancel')" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title">Open Workflow</h4>
+		  </div>
+		  <div class="modal-body">
+				  <div class="row top-buffer-margin">
+					  <div class="col-md-4"><span class="glyphicon glyphicon-folder-open">&nbsp;Project</span></div>
+					  <div class="col-md-4">Created on</div>
+					  <div class="col-md-4">Modified on</div>
+				  </div>
+			  <form name="workflowForm" accept-charset="UTF-8" role="form"  novalidate>
+				  <div class="row top-buffer">
+					  <div class="row tab-row-0" ng-repeat="w in workflows">
+						  <div class="col-md-4">
+							<a href="#" ng-click="loadWorkflow('{{w.id}}')" data-dismiss="modal">{{ w.name }}</a>
+						  </div>
+						  <div class="col-md-4">{{ w.created_at }}</div>
+						  <div class="col-md-4">{{ w.updated_at }}</div>
+					  </div>
+				  </div>
+			   </form>
+		  </div>
+		</div>
+	  </div>
+	</div>
+ </script>

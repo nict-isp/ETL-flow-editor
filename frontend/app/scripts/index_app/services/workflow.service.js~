@@ -1,0 +1,114 @@
+(function(){
+
+  'use strict';
+
+  angular.module('tesi.homeApp').service('workflowService', workflowService);
+
+  function workflowService($q, serviceCaller){
+
+        //var workflows = [];
+
+        function _getWorkflows() {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/workflows",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 //workflows.push(response.content.workflowsData);
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+
+        function _getWorkflow(id) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/workflow/" + id,{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 //workflows.push(response.content.workflowsData);
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+
+        function _createWorkflow(workflowName) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("POST","api/v1/workflow",{},{workflowName:workflowName})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+
+        function _checkWorkflow(workflowName) {
+            return serviceCaller.doRequest("POST", "api/v1/workflow/check",{},{workflowName:workflowName});
+        }
+
+        function _saveWorkflow(workflowId, workflow) {
+		    return serviceCaller.doRequest('PUT', 'api/v1/workflow/' + workflowId, {}, {cy:workflow});
+		}
+
+        function _deleteWorkflow(workflowId) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("DELETE","api/v1/workflow",{},{workflowId:workflowId})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+
+        function _getCategories() {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/categories",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 //workflows.push(response.content.workflowsData);
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+
+        return{
+            getWorkflows: _getWorkflows,
+            getWorkflow: _getWorkflow,
+            checkWorkflow: _checkWorkflow,
+            createWorkflow: _createWorkflow,
+            saveWorkflow: _saveWorkflow,
+            deleteWorkflow: _deleteWorkflow,
+            getCategories: _getCategories
+        }
+
+
+  }
+
+
+
+
+
+})();

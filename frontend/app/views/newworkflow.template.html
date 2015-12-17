@@ -1,0 +1,45 @@
+<div class="template-container" style="width: 100%;
+										background: #fff;
+										height: 100%;
+										position: relative;
+										padding-top: 50px;
+										z-index: 999999;" >
+
+  <div class="container-fluid signup-container">
+	  <div class="col-md-4"></div>
+	  <div class="col-md-4 text-center"><h4 style="margin: -25px 0px 25px 0px">New Workflow</h4></div>
+	  <div class="col-md-4"></div>
+	  <form name="workflowForm" accept-charset="UTF-8" role="form"  novalidate>
+		<div class="row top-buffer">
+		  <div class="form-group" style="margin-top: 20px;"
+		  ng-class="{'has-success': workflowForm.name.$valid,'has-error': workflowForm.name.$invalid && workflowForm.name.$dirty}">
+
+			  <input class="form-control input-sm new-workflow-name"
+					placeholder="Workflow name..."
+					name="name"
+					type="text"
+					ng-model="name"
+					check-workflow
+					style="width: 200px;"
+					required>									   				
+		  </div>
+		  <div class="row">
+                    <div class="col-md-4"></div>	 
+                    <div ng-show="workflowForm.name.$error.checkWorkflow && workflowForm.name.$dirty"
+					   class="col-md-4 help-block text-danger text-center"
+					   style="color: #d43f3a;">
+					   Project already exists
+                    </div>
+                    <div class="col-md-4"></div>
+                  </div>
+                  <div style="width: 200px; margin: 0 auto;">
+                    <a href="#/" class="btn btn-default ng-isolate-scope" style="float: left; margin-left: 20px;">Back</a>
+                    <input class="btn btn-default btn-success center-block" type="button" value="Create"
+				  ng-disabled="workflowForm.$invalid" ng-click="createWorkflow()" data-dismiss="modal">
+                  </div>
+	   </form>    
+  </div>
+
+</div>
+
+

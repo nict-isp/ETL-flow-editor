@@ -1,0 +1,1 @@
+angular.module('tesi.config', ['tesi.indexApp', 'tesi.homeApp']);

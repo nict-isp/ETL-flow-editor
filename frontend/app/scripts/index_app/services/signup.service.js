@@ -1,0 +1,34 @@
+(function(){
+
+    'use strict';
+
+    angular.module('tesi.indexApp').service('signupService', signupService);
+    
+    function signupService($q, serviceCaller){
+
+        function _signup(user){
+			var deferred = $q.defer();
+			
+            serviceCaller.doRequest('POST','api/v1/user/new',{},user)
+			.then(function(response){
+				if(serviceCaller.isSuccessResponse(response)){
+					deferred.resolve(response);
+				}
+				else{
+					deferred.reject(response);
+				}
+			});
+				
+			return deferred.promise;
+        }
+
+        function _checkEmail(email){
+            return serviceCaller.doRequest('POST', 'api/v1/auth/check_email',{},{email:email});
+        }
+        return {
+            signup: _signup,
+            checkEmail: _checkEmail
+        };
+    }
+
+})();

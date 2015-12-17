@@ -1,0 +1,191 @@
+use etl_workflow
+# Creo utente database
+db.createUser({ user: "etl_admin",   pwd: "@etl_!_workflow@", roles: [ "readWrite" ] })
+
+
+db.createUser({ user: “l@u.ca”,   pwd: “lucaf”, roles: [ "readWrite" ] })
+
+# Creo users
+db.createCollection("users", { autoIndexId:true })
+db.users.createIndex({email:1}, {unique:true})
+
+# Creo app_logins
+db.createCollection("app_logins", {
+   autoIndexId: true
+})
+
+# Creo recovery_tokens
+db.createCollection("recovery_tokens", {autoIndexId:true})
+
+# Creo workflows
+db.createCollection("workflows", {
+   autoIndexId: true
+})
+# Indice unico su name e user_id
+db.workflows.createIndex({"name":1, "user_id":1}, {unique:true})
+
+# Creo categories
+db.createCollection("categories", { autoIndexId:true })
+#Inserisco dati
+db.categories.insert({'name':'Application'})
+db.categories.insert({'name':'Sensor'})
+
+# Creo Types
+db.createCollection("types", {autoIndexId:true})
+#Inserisco dati
+db.types.insert({'name':'Rainfall'})
+db.types.insert({'name':'Twitter'})
+db.types.insert({'name':'Traffic'})
+db.types.insert({'name':'DataStore'})
+
+# Creo Files
+db.createCollection("files", {autoIndexId:true})
+
+# Creo Funzioni Trasformazione
+db.createCollection("transform_functions", {autoIndexId:true})
+
+# Creo Funzioni Virtuali
+db.createCollection("virtual_functions", {autoIndexId:true})
+
+# Creo schemas
+db.createCollection("schemas", {autoIndexId:true})
+
+# Popolo transform_functions
+db.transform_functions.insert([     {        "initial":"removeBlanks",        "operation_name":"remove Blanks",        "description":"Remove whitespaces from string",        "type":"string"     },     {        "initial":"removeSpecialChars",        "operation_name":"remove Special Chars",        "description":"Remove special characters from string",        "type":"string"     },     {        "initial":"lowerCase",        "operation_name":"lower Case",        "description":"Convert a string to lower case",        "type":"string"     },     {        "initial":"upperCase",        "operation_name":"upper Case",        "description":"Convert a string to upper case",        "type":"string"     },     {        "initial":"concat",        "operation_name":"concat",        "description":"Concatenate two strings",        "type":"string"     },     {        "initial":"stem",        "operation_name":"stem",        "description":"Apply word stemming to a string",        "type":"string"     },     {        "initial":"alphaReduce",        "operation_name":"alpha Reduce",        "description":"Strip all non-alphabetic characters from a string",        "type":"string"     },     {        "initial":"numReduce",        "operation_name":"num Reduce",        "description":"Strip all non-numeric characters from a string",        "type":"string"     },     {        "initial":"replace",        "operation_name":"replace",        "description":"Replace all occurrences of a string with a replacement",        "type":"string"     },     {        "initial":"regexReplace",        "operation_name":"regex Replace",        "description":"Replace all occurrences of a regex with a replacement",        "type":"string"     },     {        "initial":"stripURIPrefix",        "operation_name":"strip URI Prefix",        "description":"Strip the URI prefix from a string",        "type":"string"     }  ])
+
+# Popolo virtual_functions
+db.virtual_functions.insert([
+   {
+      "initial":"+",
+      "name":"sum",
+      "description":"Sum a number",
+      "data_type":"numeric",
+      "operation_type":"standard",
+      "arity":"2"
+   },
+   {
+      "initial":"-",
+      "name":"subtraction",
+      "description":"Subtract a number",
+      "data_type":"numeric",
+      "operation_type":"standard",
+      "arity":"2"
+   },
+   {
+      "initial":"*",
+      "name":"multiplication",
+      "description":"Multiplicate numbers",
+      "data_type":"numeric",
+      "operation_type":"standard",
+      "arity":"2"
+   },
+   {
+      "initial":"/",
+      "name":"division",
+      "description":"Divide a number",
+      "data_type":"numeric",
+      "operation_type":"standard",
+      "arity":"2"
+   },
+   {
+      "initial":"concat",
+      "name":"concatenate",
+      "description":"concatenate two strings",
+      "data_type":"string",
+      "operation_type":"user_defined",
+      "arity":"2"
+   },
+   {
+      "initial":"year",
+      "name":"year",
+      "description":"Get year from date",
+      "data_type":"date",
+      "operation_type":"user_defined",
+      "arity":"1"
+   },
+   {
+      "initial":"month",
+      "name":"month",
+      "description":"Get month from date",
+      "data_type":"date",
+      "operation_type":"user_defined",
+      "arity":"1"
+   },
+   {
+      "initial":"day",
+      "name":"day",
+      "description":"Get day from date",
+      "data_type":"date",
+      "operation_type":"user_defined",
+      "arity":"1"
+   },
+   {
+      "initial":"hour",
+      "name":"hour",
+      "description":"Get hour from date",
+      "data_type":"date",
+      "operation_type":"user_defined",
+      "arity":"1"
+   },
+   {
+      "initial":"minute",
+      "name":"minute",
+      "description":"Get minutes from a date",
+      "data_type":"date",
+      "operation_type":"user_defined",
+      "arity":"1"
+   },
+   {
+      "initial":"second",
+      "name":"second",
+      "description":"Get seconds from date",
+      "data_type":"date",
+      "operation_type":"user_defined",
+      "arity":"1"
+   },
+   {
+      "initial":"ADDday",
+      "name":"Add day",
+      "description":"Add days to a date",
+      "data_type":"numeric",
+      "operation_type":"user_defined",
+      "arity":"1"
+   },
+   {
+      "initial":"ADDhour",
+      "name":"Add hour",
+      "description":"Add hours to a date",
+      "data_type":"numeric",
+      "operation_type":"user_defined",
+      "arity":"1"
+   }
+])
+
+# Popolo schemas
+db.schemas.insert(    {         "sensor_name": "ExampleMySQLSensor",         "sensor_type": "MySQL",         "time_offset": "+09:00",         "m2m_info": {             "formatVersion": "1.02",             "srcContact": "",             "createdContact": "TestUser<testuser@example.com>",             "tag": "",             "device": {                 "capability": {                     "frequency": {                         "type": "hour",                         "count": 1                     }                 }             }         },         "m2m_data_schema": [             {                 "type": "string",                 "name": "time"             },             {                 "type": "numeric",                 "name": "longitude",                 "unit": "degree"             },             {                 "type": "numeric",                 "name": "latitude",                 "unit": "degree"             },             {                 "type": "numeric",                 "name": "altitude",                 "unit": "m"             },             {                 "type": "numeric",                 "name": "SO2",                 "unit": "ppm"             },             {                 "type": "numeric",                 "name": "NO",                 "unit": "ppm"             },             {                 "type": "numeric",                 "name": "NO2",                 "unit": "ppm"             },             {                 "type": "numeric",                 "name": "SPM",                 "unit": "mg/m3"             },             {                 "type": "numeric",                 "name": "PM2.5",                 "unit": "µg/m3"             }         ],         "primary_keys": [             "time",             "longitude",             "latitude"         ],         "sample": [             {                 "time": "2014-08-15T21:00:00.000",                 "longitude": "136.048724",                 "latitude": "33.8144776",                 "altitude": "NULL",                 "SO2": "NULL",                 "NO": "NULL",                 "NO2": "NULL",                 "SPM": "NULL",                 "PM2_5": "NULL"             },             {                 "time": "2014-08-15T21:40:00.000",                 "longitude": "139.0634281",                 "latitude": "36.3894816",                 "altitude": "NULL",                 "SO2": "NULL",                 "NO": "NULL",                 "NO2": "NULL",                 "SPM": "NULL",                 "PM2_5": "NULL"             },             {                 "time": "2014-08-15T21:50:00.000",                 "longitude": "138.4768306",                 "latitude": "36.2488683",                 "altitude": "NULL",                 "SO2": "NULL",                 "NO": "NULL",                 "NO2": "NULL",                 "SPM": "NULL",                 "PM2_5": "NULL"             }         ],         "store_type": "file",         "store_params": {             "mysql": {                 "user": "testuser",                 "password": "testuser",                 "host": "mysql-server.example.com",                 "db": "UDSEventData"             },             "evwh": {                 "host": "evwh-server.example.com",                 "port": 12345             }         },         "interval": 3,         "mysql_fetch_params": {             "user": "testuser",             "password": "testuser",             "host": "mysql-server.example.com",             "db": "GeoSocialDatabase"         },         "_sensor_datetime": "2013-09-30T23:00:00",         "query": "SELECT NIES_code, SO2, NO, NO2 FROM japan_airpollution_data WHERE log_datetime='2013-04-01T12:00:00'"     })
+
+######
+
+db.schemas.insert({          "sensor_name": "ExampleIEEE1888Sensor",          "sensor_type": "IEEE1888",          "time_offset": "+09:00",          "m2m_info": {              "formatVersion": "1.02",              "srcContact": "",              "createdContact": "TestUser<testuser@example.com>",              "tag": ""          },          "m2m_data_schema": [              {                  "type": "string",                  "name": "time"              },              {                  "type": "numeric",                  "name": "longitude",                  "unit": "degree"              },              {                  "type": "numeric",                  "name": "latitude",                  "unit": "degree"              },              {                  "type": "numeric",                  "name": "altitude",                  "unit": "m"              },              {                  "type": "numeric",                  "name": "temperature",                  "unit": "celcius"              }          ],          "primary_keys": [              "time",              "longitude",              "latitude"          ],          "sample": [              {                  "time": "2014-08-15T21:00:00.000",                  "longitude": "136.048724",                  "latitude": "33.8144776",                  "altitude": "NULL",                  "temperature": 28              },              {                  "time": "2014-08-15T21:40:00.000",                  "longitude": "139.0634281",                  "latitude": "36.3894816",                  "altitude": "NULL",                  "temperature": 27              },              {                  "time": "2014-08-15T21:50:00.000",                  "longitude": "138.4768306",                  "latitude": "36.2488683",                  "altitude": "NULL",                  "temperature": 27.5              }          ],          "store_type": "file",          "store_params": {              "mysql": {                  "user": "testuser",                  "password": "testuser",                  "host": "mysql-server.example.com",                  "db": "UDSEventData"              },              "evwh": {                  "host": "evwh-server.example.com",                  "port": 12345              }          },          "interval": 5,          "wsdl_url": "http://ieee1888.example.com/...?wsdl",          "query": {              "_attrName": "time",              "_id": "http: //ieee1888.example.com/weather/01001/airtmp",              "_select": "maximum"          }      })
+
+######
+
+db.schemas.insert(    {          "sensor_name": "ExampleTwitterSensor",          "sensor_type": "twitter",          "time_offset": "+00:00",          "m2m_info": {              "formatVersion": "1.02",              "srcContact": "",              "createdContact": "TestUser<testuser@example.com>",              "tag": ""          },          "m2m_data_schema": [              {                  "type": "string",                  "name": "time"              },              {                  "type": "numeric",                  "name": "longitude",                  "unit": "degree"              },              {                  "type": "numeric",                  "name": "latitude",                  "unit": "degree"              },              {                  "type": "numeric",                  "name": "altitude",                  "unit": "m"              },              {                  "type": "string",                  "name": "id_str"              },              {                  "type": "string",                  "name": "tweet"              }          ],          "primary_keys": [              "id_str"          ],          "sample": [              {                  "time": "2014-08-15T21:03:02.000+0000",                  "longitude": "14.167.308",                  "latitude": "45.415.665",                  "altitude": "NULL",                  "id_str": 1,                  "tweet": "Mercoledì ( 8/20 ) nuvoloso a volte pioggia . Almeno 19 gradi . Fino a 23 gradi . Probabilità di precipitazioni 50% http://t.co/IOz1EUXzqS #05"              },              {                  "time": "2014-08-15T21:04:05.000+0000",                  "longitude": "140.127.457",                  "latitude": "41.869.156",                  "altitude": "NULL",                  "id_str": 2,                  "tweet": "???(8/20) Nuvoloso a volte pioggia. Più basso 20 Gradi . Massima 26 Gradi . Probabilità di precipitazioni 60% http://t.co/TWbbWjbaDo #05"              },              {                  "time": "2014-08-15T21:08:54.000+0000",                  "longitude": "133.919.769",                  "latitude": "34.655.273",                  "altitude": "NULL",                  "id_str": 3,                  "tweet": "Martedì (8/19) Nuvoloso a volte pioggia. Più basso 24Gradi . Massima 31 Gradi . Probabilità di precipitazioni 50% http://t.co/UAJUGMIyzX #05"              }          ],          "store_type": "file",          "store_params": {              "mysql": {                  "user": "testuser",                  "password": "testuser",                  "host": "mysql-server.example.com",                  "db": "UDSEventData"              },              "evwh": {                  "host": "evwh-server.example.com",                  "port": 12345              }          },          "set_auth_params": {              "consumer_key": "CoyEeULwSfVuGV8WMIXXX",              "consumer_secret": "efvCxWxWIY5ShVmLnId8rnTY5p67lgSqHA18pXXX",              "access_key": "598919505-e90LR7vgowIedjdBKWJ9tBUsdDcpA2N5wDBRXXX",              "access_secret": "iwYrqzGqJXkvC6tIomOI8uw0HANOp2hvkbPQaamXXX"          },          "location_filter": [              122.933611,              20.425277,              153.986388,              45.557777          ]      })
+
+######
+
+db.schemas.insert(   {       "sensor_name":"ExampleHttpSensor",       "sensor_type":"http",       "time_offset":"+09:00",       "m2m_info":{            "formatVersion":"1.02",          "srcContact":"",          "createdContact":"TestUser<testuser@example.com>",          "tag":"",          "device":{               "capability":{                  "frequency":{                     "type":"seconds",                   "count":10                }             }          }       },       "m2m_data_schema":[            {               "type":"string",             "name":"time"          },          {               "type":"numeric",             "name":"longitude",             "unit":"degree"          },          {               "type":"numeric",             "name":"latitude",             "unit":"degree"          },          {               "type":"numeric",             "name":"altitude",             "unit":"m"          },          {               "type":"numeric",             "name":"rainfall",             "unit":"mm"          },          {               "type":"string",             "name":"city_name"          },          {               "type":"string",             "name":"station_name"          }       ],       "primary_keys":[            "time",          "longitude",          "latitude"       ],       "sample":[            {               "time":"2014-08-15T21:00:00.000",             "longitude":"136.048724",             "latitude":"33.8144776",             "altitude":"NULL",             "rainfall":0,             "city_name":"Tokyo",             "station_name":"NULL"          },          {               "time":"2014-08-15T21:40:00.000",             "longitude":"139.0634281",             "latitude":"36.3894816",             "altitude":"NULL",             "rainfall":6.5,             "city_name":"Tokyo",             "station_name":"NULL"          },          {               "time":"2014-08-15T21:50:00.000",             "longitude":"138.4768306",             "latitude":"36.2488683",             "altitude":"NULL",             "rainfall":8,             "city_name":"Tokyo",             "station_name":"NULL"          }       ],       "store_type":"file",       "store_params":{            "mysql":{               "user":"testuser",             "password":"testuser",             "host":"mysql-server.example.com",             "db":"UDSEventData"          },          "evwh":{               "host":"evwh-server.example.com",             "port":12345          }       },       "interval":10,       "_url_list":[            "http://uds-portal002.isp.ucri.jgn-x.jp/..html",          "http://uds-portal002.isp.ucri.jgn-x.jp/..html",          "http://uds-portal002.isp.ucri.jgn-x.jp/..html"       ]    })
+
+######
+
+db.schemas.insert(   {       "sensor_name":"traffic",       "sensor_type":"traffic",       "time_offset":"+09:00",       "m2m_info":{            "formatVersion":"1.02",          "srcContact":"",          "createdContact":"TestUser<testuser@example.com>",          "tag":"",          "device":{               "capability":{                  "frequency":{                     "type":"seconds",                   "count":10                }             }          }       },       "m2m_data_schema":[            {               "type":"string",             "name":"time"          },          {               "type":"numeric",             "name":"longitude",             "unit":"degree"          },          {               "type":"numeric",             "name":"latitude",             "unit":"degree"          },          {               "type":"numeric",             "name":"altitude",             "unit":"m"          },          {               "type":"numeric",             "name":"rainfall",             "unit":"mm"          },          {               "type":"string",             "name":"city_name"          },          {               "type":"string",             "name":"station_name"          }       ],       "primary_keys":[            "time",          "longitude",          "latitude"       ],       "sample":[            {               "time":"2014-08-15T21:00:00.000",             "longitude":"136.048724",             "latitude":"33.8144776",             "altitude":"NULL",             "rainfall":0,             "city_name":"Tokyo",             "station_name":"NULL"          },          {               "time":"2014-08-15T21:40:00.000",             "longitude":"139.0634281",             "latitude":"36.3894816",             "altitude":"NULL",             "rainfall":6.5,             "city_name":"Tokyo",             "station_name":"NULL"          },          {               "time":"2014-08-15T21:50:00.000",             "longitude":"138.4768306",             "latitude":"36.2488683",             "altitude":"NULL",             "rainfall":8,             "city_name":"Tokyo",             "station_name":"NULL"          }       ],       "store_type":"file",       "store_params":{            "mysql":{               "user":"testuser",             "password":"testuser",             "host":"mysql-server.example.com",             "db":"UDSEventData"          },          "evwh":{               "host":"evwh-server.example.com",             "port":12345          }       },       "interval":10,       "_url_list":[            "http://uds-portal002.isp.ucri.jgn-x.jp/..html",          "http://uds-portal002.isp.ucri.jgn-x.jp/..html",          "http://uds-portal002.isp.ucri.jgn-x.jp/..html"       ]    })
+
+######
+
+db.schemas.insert(   {       "sensor_name":"rain",       "sensor_type":"rain",       "time_offset":"+09:00",       "m2m_info":{            "formatVersion":"1.02",          "srcContact":"",          "createdContact":"TestUser<testuser@example.com>",          "tag":"",          "device":{               "capability":{                  "frequency":{                     "type":"seconds",                   "count":10                }             }          }       },       "m2m_data_schema":[            {               "type":"string",             "name":"time"          },          {               "type":"numeric",             "name":"longitude",             "unit":"degree"          },          {               "type":"numeric",             "name":"latitude",             "unit":"degree"          },          {               "type":"numeric",             "name":"altitude",             "unit":"m"          },          {               "type":"numeric",             "name":"rainfall",             "unit":"mm"          },          {               "type":"string",             "name":"city_name"          },          {               "type":"string",             "name":"station_name"          }       ],       "primary_keys":[            "time",          "longitude",          "latitude"       ],       "sample":[            {               "time":"2014-08-15T21:00:00.000",             "longitude":"136.048724",             "latitude":"33.8144776",             "altitude":"NULL",             "rainfall":0,             "city_name":"Tokyo",             "station_name":"NULL"          },          {               "time":"2014-08-15T21:40:00.000",             "longitude":"139.0634281",             "latitude":"36.3894816",             "altitude":"NULL",             "rainfall":6.5,             "city_name":"Tokyo",             "station_name":"NULL"          },          {               "time":"2014-08-15T21:50:00.000",             "longitude":"138.4768306",             "latitude":"36.2488683",             "altitude":"NULL",             "rainfall":8,             "city_name":"Tokyo",             "station_name":"NULL"          }       ],       "store_type":"file",       "store_params":{            "mysql":{               "user":"testuser",             "password":"testuser",             "host":"mysql-server.example.com",             "db":"UDSEventData"          },          "evwh":{               "host":"evwh-server.example.com",             "port":12345          }       },       "interval":10,       "_url_list":[            "http://uds-portal002.isp.ucri.jgn-x.jp/..html",          "http://uds-portal002.isp.ucri.jgn-x.jp/..html",          "http://uds-portal002.isp.ucri.jgn-x.jp/..html"       ]    })
+
+######
+
+db.schemas.insert(   {       "sensor_name":"rainfall",       "sensor_type":"rainfall",       "time_offset":"+09:00",       "m2m_info":{            "formatVersion":"1.02",          "srcContact":"",          "createdContact":"TestUser<testuser@example.com>",          "tag":"",          "device":{               "capability":{                  "frequency":{                     "type":"seconds",                   "count":10                }             }          }       },       "m2m_data_schema":[            {               "type":"string",             "name":"time"          },          {               "type":"numeric",             "name":"longitude",             "unit":"degree"          },          {               "type":"numeric",             "name":"latitude",             "unit":"degree"          },          {               "type":"numeric",             "name":"altitude",             "unit":"m"          },          {               "type":"numeric",             "name":"rainfall",             "unit":"mm"          },          {               "type":"string",             "name":"city_name"          },          {               "type":"string",             "name":"station_name"          }       ],       "primary_keys":[            "time",          "longitude",          "latitude"       ],       "sample":[            {               "time":"2014-08-15T21:00:00.000",             "longitude":"136.048724",             "latitude":"33.8144776",             "altitude":"NULL",             "rainfall":0,             "city_name":"Tokyo",             "station_name":"NULL"          },          {               "time":"2014-08-15T21:40:00.000",             "longitude":"139.0634281",             "latitude":"36.3894816",             "altitude":"NULL",             "rainfall":6.5,             "city_name":"Tokyo",             "station_name":"NULL"          },          {               "time":"2014-08-15T21:50:00.000",             "longitude":"138.4768306",             "latitude":"36.2488683",             "altitude":"NULL",             "rainfall":8,             "city_name":"Tokyo",             "station_name":"NULL"          }       ],       "store_type":"file",       "store_params":{            "mysql":{               "user":"testuser",             "password":"testuser",             "host":"mysql-server.example.com",             "db":"UDSEventData"          },          "evwh":{               "host":"evwh-server.example.com",             "port":12345          }       },       "interval":10,       "_url_list":[            "http://uds-portal002.isp.ucri.jgn-x.jp/..html",          "http://uds-portal002.isp.ucri.jgn-x.jp/..html",          "http://uds-portal002.isp.ucri.jgn-x.jp/..html"       ]    })
+
+

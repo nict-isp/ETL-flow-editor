@@ -1,0 +1,28 @@
+(function(){
+    var checkWorkflow = function(workflowService,$q) {
+        return {
+            require: "ngModel",
+            link: function(scope, element, attributes, ngModel) {
+
+                ngModel.$asyncValidators.checkWorkflow = function(modelValue, viewValue) {
+                    return workflowService.checkWorkflow(viewValue).then(function(response){
+
+                       if(response.content.available){
+                           return true;
+                       }
+                        else{
+                           return $q.reject('exists');
+                       }
+                    });
+
+                };
+
+                scope.$watch("modelValue", function() {
+                    ngModel.$validate();
+                });
+            }
+        };
+    };
+
+    angular.module('sband.indexApp').directive("checkEmail", checkEmail);
+})();

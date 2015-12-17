@@ -1,0 +1,120 @@
+<div class="container-fluid signup-container">
+    <div class="row">          
+        
+
+        <div class="col-md-3 col-sm-3">
+		</div>
+		<div class="col-md-6 col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Create your account</h3>
+                </div>
+                <div class="panel-body">
+                    <form role="form" ng-submit="signup()" name="signupForm" novalidate>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group has-feedback"
+                                     ng-class="{'has-success': signupForm.first_name.$valid,'has-error': signupForm.first_name.$invalid && signupForm.first_name.$dirty}">
+                                    <input type="text" name="first_name" id="first_name" class="form-control input-sm"
+                                           placeholder="First Name" ng-model="user.name" required>
+                                    <span ng-show="signupForm.first_name.$invalid && signupForm.first_name.$dirty" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                    <span ng-show="signupForm.first_name.$valid" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                                    <p ng-show="signupForm.first_name.$error.required && signupForm.first_name.$dirty"
+                                       class="help-block text-danger">Required parameter.</p>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group has-feedback"
+                                     ng-class="{'has-success': signupForm.last_name.$valid,'has-error': signupForm.last_name.$invalid && signupForm.last_name.$dirty}">
+                                    <input type="text" name="last_name" id="last_name" class="form-control input-sm"
+                                           placeholder="Last Name" ng-model="user.surname" required>
+                                    <span ng-show="signupForm.last_name.$invalid && signupForm.last_name.$dirty" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                    <span ng-show="signupForm.last_name.$valid" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                                    <p ng-show="signupForm.last_name.$error.required && signupForm.last_name.$dirty"
+                                       class="help-block text-danger">Required parameter.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback"
+                             ng-class="{'has-success': signupForm.email.$valid,'has-error': signupForm.email.$invalid && signupForm.email.$dirty}">
+                            <input type="email" 
+									name="email" 
+									id="email" 
+									class="form-control input-sm"
+                                   placeholder="Email Address" 
+                                   ng-model="user.email" 
+                                   check-email 
+                                   required>
+                            <span ng-show="signupForm.email.$invalid && signupForm.email.$dirty" 
+								class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                            <span ng-show="signupForm.email.$valid" 
+								class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                            <p ng-show="signupForm.email.$error.checkEmail && signupForm.email.$dirty"
+                               class="help-block text-danger">Email not available.</p>
+                            <span class="form-control-feedback" ng-show="signupForm.email.$pending">
+                                        <i class="fa fa-spinner fa-spin"></i>
+                            </span>
+                            <p ng-show="signupForm.email.$error.required && signupForm.email.$dirty"
+                               class="help-block text-danger">Required parameter.</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group has-feedback"
+                                     ng-class="{'has-success': signupForm.password.$valid,'has-error': signupForm.password.$invalid && signupForm.password.$dirty}">
+                                    <input type="password" name="password" 
+											id="password" 
+											class="form-control input-sm"
+											placeholder="Password" 
+											ng-model="user.password" 
+											ng-minlength="4" 
+											required>
+                                    <span ng-show="signupForm.password.$invalid && signupForm.password.$dirty" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                    <span ng-show="signupForm.password.$valid" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                                    <p ng-show="signupForm.password.$error.required && signupForm.password.$dirty"
+                                       class="help-block text-danger">Required parameter.</p>
+                                    <p ng-show="signupForm.password.$error.minlength"
+                                       class="help-block text-danger">Type at least 4 digits</p>                                       
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group has-feedback"
+                                     ng-class="{'has-success': signupForm.password_confirmation.$valid,'has-error': signupForm.password_confirmation.$invalid && signupForm.password_confirmation.$dirty}">
+                                    
+                                    <input type="password" name="password_confirmation" 
+											id="password_confirmation" 
+											ng-model="user.password_confirmation"
+											class="form-control input-sm" 
+											placeholder="Confirm Password" 											
+											compare-to="user.password"
+											required>
+                                    <span ng-show="signupForm.password_confirmation.$invalid && signupForm.password_confirmation.$dirty" 
+										class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                    <span ng-show="signupForm.password_confirmation.$valid" 
+										class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>			
+                                                                        
+                                    <p ng-show="signupForm.password_confirmation.$error.compareTo && signupForm.password_confirmation.$dirty"
+                                       class="help-block text-danger">Passwords do not match or length less than 4 characters</p>
+                                       
+                                    <p ng-show="signupForm.password_confirmation.$error.required && signupForm.password_confirmation.$dirty"
+                                       class="help-block text-danger">Please confirm the password.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="submit" value="Signup" class="btn btn-info btn-block signup-btn" ng-disabled="signupForm.$invalid">
+
+                    </form>
+
+							<div ng-repeat="(key,val) in alerts" class="alert {{key}}" id="login-error">
+								<div ng-repeat="msg in val">{{msg}}</div>
+							</div>                    
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

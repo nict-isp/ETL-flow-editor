@@ -1,0 +1,56 @@
+(function(){
+
+  'use strict';
+
+  angular.module('tesi.homeApp').service('dcnService', dcnService);
+
+  function dcnService($q, $http, serviceDcnCaller){
+  //function dcnService($q, serviceCaller){
+
+        //var workflows = [];
+
+        /*function _getWorkflows() {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/workflows",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 //workflows.push(response.content.workflowsData);
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }*/
+        
+        function _transformJSON(json) {
+			//var deferred = $q.defer();
+            //serviceCaller.doRequest("POST","api/v1/json",{}, json)
+            //$http({method: 'POST', url: "http://159.149.142.35:5050", data: "PROVA", });
+            return serviceDcnCaller.doRequest("POST","",{}, json);
+            /*.then(function(response){
+                 if(response != false){
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });*/
+
+            //return deferred.promise;
+        }        
+
+        return{
+            transformJSON: _transformJSON
+        }
+
+
+  }
+
+
+
+
+
+})();

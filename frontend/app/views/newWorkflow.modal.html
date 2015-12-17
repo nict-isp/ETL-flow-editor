@@ -1,0 +1,39 @@
+      <script type="text/ng-template" id="newWorkflow.modal.html">
+         <div class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" ng-click="close('Cancel')" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Yes or No?</h4>
+              </div>
+              <div class="modal-body">
+			  <form name="workflowForm" accept-charset="UTF-8" role="form"  novalidate>
+				  <div class="form-group" style="margin-top: 20px;"
+				  ng-class="{'has-success': workflowForm.name.$valid,'has-error': workflowForm.name.$invalid && workflowForm.name.$dirty}">
+
+					  <input class="form-control input-sm new-workflow-name"
+							placeholder="Workflow name..."
+							name="name"
+                            type="text"
+                            ng-model="name"
+                            check-workflow
+                            required>
+
+                       <p ng-show="workflowForm.name.$error.checkWorkflow && workflowForm.name.$dirty"
+                               class="help-block text-danger">Project already exists</p>
+
+						
+				  </div>
+
+					  <input class="btn btn-default btn-success center-block" type="button" value="Create"
+					      ng-disabled="workflowForm.$invalid" ng-click="createWorkflow()" data-dismiss="modal">
+			   </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" ng-click="close('No')" class="btn btn-default" data-dismiss="modal">No</button>
+                <button type="button" ng-click="close('Yes')" class="btn btn-primary" data-dismiss="modal">Yes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+     </script>

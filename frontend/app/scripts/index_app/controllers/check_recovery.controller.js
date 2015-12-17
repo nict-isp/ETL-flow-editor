@@ -1,0 +1,58 @@
+'use strict';
+
+angular.module('tesi.indexApp')
+  .controller('CheckRecoveryCtrl', function ($rootScope, $scope, $window, $routeParams, $location, recoveryService, alertsManager) {	  
+
+      $scope.alerts = alertsManager.alerts;
+      
+      $scope.checkToken = function(){
+          var emailAddress = $routeParams.emailAddress;
+          var userID = $routeParams.userID;
+          var token = $routeParams.token;
+          
+			recoveryService.checkToken(emailAddress, token).then(
+			  function(response){		
+				if(response.content.canPass==true){
+					$scope.emailAddress = emailAddress;
+					$scope.passwordForm = true;					
+					$scope.tokenID = response.content.tokenID;
+					$scope.canRecovery = true;	
+				}
+				else {
+				    $window.location.href = "/";
+				}
+			},
+			function(error){
+				$scope.canRecovery = false;
+				$window.location.href = "/";
+			});          
+	  };
+	  
+	$scope.updatePassword = function() {		
+		recoveryService.setNewPassword($scope.emailAddress, $scope.tokenID, $scope.user.newPass)
+			.then(
+			function(response){
+				if(response.content.updated == 'true') {
+					$scope.showPasswordForm = true;
+					$scope.showChangePasswordForm = false;
+					alertsManager.clearAlerts();
+					alertsManager.addAlert("Password successfully changed, you can now proceed with login", 'alert-success');
+					$location.path('#/login');
+				}
+			},
+			function(error){
+			  // Remove Alerts
+			  console.log(error);
+			  $timeout(function() {
+				  alertsManager.clearAlerts();
+				  alertsManager.addAlert(error.content.message, 'alert-danger');
+				  alertsManager.clearAlerts();
+			  }, 2000);
+			}
+		);
+	};	  
+	  
+	  $scope.checkToken();
+
+  });
+

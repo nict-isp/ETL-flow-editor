@@ -1,0 +1,26 @@
+(function () {
+
+    'use strict';
+
+    angular
+        .module('tesi.homeApp')
+        .config(function ($routeProvider) {
+	    $routeProvider
+	      .when('/', {
+		templateUrl: 'views/login.template.html',
+		controller: 'LoginCtrl'
+	      })
+	      .when('/about', {
+		templateUrl: 'views/about.html',
+		controller: 'AboutCtrl'
+	      })  
+	      .when('/signup', {
+		templateUrl: 'views/signup.template.html',
+		controller: 'SignupCtrl'
+	      }) 
+	      .otherwise({
+		redirectTo: '/'
+	      });
+});
+
+})();

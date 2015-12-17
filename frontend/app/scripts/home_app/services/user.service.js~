@@ -1,0 +1,24 @@
+(function(){
+
+  'use strict';
+
+  angular.module('tesi.homeApp').service('userService', userService);
+
+  function userService(serviceCaller){
+
+        function _getUser() {
+            return serviceCaller.doRequest('GET','api/v1/user',{},{});
+        }
+
+        return{
+            getUser: _getUser
+        }
+
+
+  }
+
+
+
+
+
+})();

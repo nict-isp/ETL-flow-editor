@@ -1,0 +1,30 @@
+<div class="template-container" style="width: 100%;
+										background: #fff;
+										height: 100%;
+										position: relative;
+										padding-top: 50px;
+										z-index: 999999;" >
+
+  <div class="container-fluid signup-container">
+    <h4 style="margin: -25px 0px 25px 0px">Open Workflow</h4>
+    <div class="row top-buffer-margin">
+      <div class="col-md-4"><span class="glyphicon glyphicon-folder-open">&nbsp;Project</span></div>
+      <div class="col-md-4">Created on</div>
+      <div class="col-md-4">Modified on</div>
+    </div>
+    <form name="workflowForm" accept-charset="UTF-8" role="form"  novalidate>
+      <div class="row top-buffer">
+		<img ng-src="{{loadingURL}}" ng-show="showLoading" style="width: 35px; margin-bottom: 30px;" />	
+        <div class="row tab-row-0" ng-repeat="w in workflows">
+          <div class="col-md-4">
+            <a href="#" ng-click="loadWorkflow('{{w.id}}')" data-dismiss="modal">{{ w.name }}</a>
+          </div>          
+          <div class="col-md-4">{{ w.created_at }}</div>
+          <div class="col-md-4">{{ w.updated_at }}</div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
+

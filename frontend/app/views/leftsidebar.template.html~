@@ -1,0 +1,58 @@
+<div id="side">
+	<div class="btn-toolbar btn-toolbar-custom adjust-center">
+		<div class="btn-group">
+			<button ng-if="workflow.isDefault != true"
+			        class="btn btn-delete btn-sm" 
+			        ng-really-message="Are you sure?" 
+			        ng-really-click="deleteWorkflow()" 
+			        ng-disabled="disableButtons"
+                                data-toggle="tooltip" data-placement="bottom" tooltip
+			        title="Delete project">
+			        <span class="glyphicon glyphicon-trash"></span>
+			</button>
+			<button ng-if="workflow.isDefault == true"
+			        class="btn btn-custom btn-sm" 
+			        ng-really-message="Are you sure?" 
+			        ng-really-click="deleteWorkflow()" 
+			        ng-disabled="true"
+                                data-toggle="tooltip" data-placement="bottom" tooltip
+			        title="Delete project">
+			        <span class="glyphicon glyphicon-trash"></span>
+			</button>			
+			
+			<a href="#/new" class="btn btn-success btn-sm active"
+                                data-toggle="tooltip" data-placement="bottom" tooltip
+                                title="New project">
+				<span class="glyphicon glyphicon-file" ></span>
+		    </a>
+		    <!--<button class="btn btn-primary btn-sm" ng-click="showOpenWorkflowsModal()">
+		    <span class="glyphicon glyphicon-folder-open"></span></button>-->
+        <a ng-href="#/open" class="btn btn-primary btn-sm" 
+                            data-toggle="tooltip" data-placement="bottom" tooltip
+                            title="Open...">
+			<span class="glyphicon glyphicon-folder-open"></span>
+		</a>
+
+			<button class="btn btn-custom btn-sm" ng-click="refresh()" 
+                                data-toggle="tooltip" data-placement="bottom" tooltip
+                                ng-disabled="disableButtons" title="Refresh">
+				<span class="glyphicon glyphicon-repeat"></span>
+			</button>
+			<button class="btn btn-custom btn-sm" ng-click="save()" 
+                                data-toggle="tooltip" data-placement="bottom" tooltip
+                                ng-disabled="disableButtons" title="Save">
+				<span class="glyphicon glyphicon-floppy-disk"></span>
+			</button>
+			<!--<button class="btn btn-custom btn-sm" ng-click="showDeleteWorkflowModal()" ng-disabled="disableButtons"><span class="glyphicon glyphicon-trash"></span></button>-->			
+		</div>
+	</div>	
+	<div class="sidebar-details" ng-show="showDetails" style="margin-left: 5px;">
+		<div>
+			<h4 style="margin-bottom:0px;">Project</h4>
+			<small>{{ workflow.name }}</small>
+		</div>
+	</div>
+    <!--<ul class="nav nav-list">
+        <li ng-repeat="w in workflows" class="workflow_item"><a href="#" ng-click="loadWorkflow('{{w.name}}')"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;{{ w.name }}</a></li>
+    </ul>-->
+</div>

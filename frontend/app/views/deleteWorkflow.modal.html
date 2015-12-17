@@ -1,0 +1,35 @@
+  <script type="text/ng-template" id="deleteWorkflow.modal.html">
+	 <div class="modal fade">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">			
+			<h4 class="modal-title">Delete Workflow</h4>
+		  </div>
+		  <div class="modal-body">
+			  <div class="row top-buffer-margin">
+				  <div class="col-md-6">
+				   <span class="glyphicon glyphicon-trash"></span> Are you sure to delete the project?
+				  </div>
+			  </div>			  
+			  <form name="workflowForm" accept-charset="UTF-8" role="form"  novalidate>			
+				  <div class="row top-buffer">
+					  <div class="col-md-3 col-sm-3">
+						<input class="btn btn-lg btn-success btn-block" type="submit" value="Yes" ng-click="deleteWorkflow()" data-dismiss="modal">					
+					  </div>					
+					  <div class="col-md-3 col-sm-3">
+						<input class="btn btn-lg btn-danger btn-block" 
+								class="close" 
+								value="No"
+								ng-click="close('Cancel')" 
+								data-dismiss="modal" 
+								aria-hidden="true" />
+					  </div>						  					
+				  </div>  				  
+			   </form>			   			   
+		  </div>
+		  <!-- modal-body -->
+		</div>
+		<!-- modal content -->
+	  </div>
+	</div>
+ </script>

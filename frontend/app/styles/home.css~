@@ -1,0 +1,161 @@
+/*
+ *
+ */
+
+HTML {
+    height: 100%;
+}
+BODY {
+    font-family: arial;
+    font-size: 13px;
+    /*position: relative;
+    height: 100%;*/
+/*background-image: url('/images/logo_unimi.jpg');
+background-repeat: no-repeat;
+background-position: left top;*/
+	overflow: hidden;
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	transform: rotate(0deg);
+}
+
+body:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 129%;
+  right: -33%;
+  z-index: -1;
+  background: url('/images/logo_unimi.jpg');
+  background-repeat: no-repeat;
+  background-position: 72% 99%;
+  opacity: 0.4;
+  -webkit-transform: rotate(-25deg);
+  transform: rotate(-25deg);
+}
+
+
+.navbar-custom {
+  background-color: #f8f8f8 !important;
+  border-color: #BBBBBB !important;
+}
+HEADER {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    /*height: 139px;
+    border-bottom: 1px solid #ddd;*/
+}
+HEADER .super {
+    background-color: #2D2D2D;
+    padding-left: 16px;
+}
+HEADER .super a {
+    display: inline-block;
+    padding: 2px 8px;
+    font-weight: bold;
+    color: #aaa;
+}
+#logo {
+    margin:0 32px 0 16px;
+}
+HEADER .search {
+    padding: 4px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f3f3f3;
+}
+HEADER .controls {
+    padding: 8px 16px;
+}
+HEADER .controls h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: normal;
+    /*color: #DD4B39;*/
+    color: #527BAB;
+    /*display: inline-block;*/
+    width: 160px;
+    float: left;
+}
+
+#content {
+    position: absolute;
+    top: 40px;
+    left: 196px;
+    bottom: 0;
+    right: 0;
+    overflow: hidden !important;
+}
+
+#content h2{
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.btn .caret {
+    margin-left: 16px;
+}
+.unread-message {
+    text-align: center;
+    margin: 1em;
+}
+#compose-button {
+    width: 120px;
+    margin-bottom: 2em;
+}
+
+
+
+/*
+ * LOGIN
+ */
+.login-container {
+  width: 60%;
+}
+
+#login-error {
+  margin-top: 30px;
+}
+
+.signup-btn {
+  width: 100px !important;
+  margin: 0 auto;
+}
+
+/*
+ * PREFERENCES
+ */
+DIV.template-container.ng-scope {
+width: 100%;
+border: 1px solid black;
+margin-left: 86px;
+position: relative;
+background: #fff;
+min-height: 300px;
+margin-top: -15px;
+}
+
+/*
+ *  CUSTOM
+*/
+
+.adjust-center {
+  margin: 0 auto !important;
+}
+
+.margin-left-20 {
+  margin-left: 20px !important;
+}
+
+
+.scroll {
+overflow-y: auto !important;
+max-height: 200px !important;
+border: 1px solid #EFEFEF !important;
+max-width: 100% !important;
+margin: 5px 0px 0px 10px !important;
+}

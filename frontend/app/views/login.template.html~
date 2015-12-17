@@ -1,0 +1,56 @@
+<div class="container login-container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title" class="text-center">Login</h3>
+                </div>
+                <div class="panel-body">
+
+                    <form name="loginForm" accept-charset="UTF-8" role="form"  novalidate>
+                        <fieldset>
+                            <div class="form-group has-feedback" ng-class="{'has-success': loginForm.email.$valid,'has-error': loginForm.email.$invalid && loginForm.email.$dirty}">
+                                <input class="form-control" placeholder="type your email" name="email"
+                                       type="email" ng-model="user.emailAddress" required>
+                                <p ng-show="loginForm.email.$error.required && loginForm.email.$dirty"
+                                   class="help-block text-danger">Your email is required.</p>
+                                <p ng-show="loginForm.email.$error.email && loginForm.email.$dirty"
+                                   class="help-block text-danger">Email format not correct</p>
+                                <span ng-show="loginForm.email.$invalid && loginForm.email.$dirty" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                <span ng-show="loginForm.email.$valid" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                            <div class="form-group has-feedback" ng-class="{'has-success': loginForm.password.$valid,'has-error': loginForm.password.$invalid && loginForm.email.$dirty}">
+                                <input class="form-control" placeholder="type your password" name="password"
+                                       type="password" ng-model="user.password" required>
+                                <p ng-show="loginForm.password.$error.required && loginForm.password.$dirty"
+                                   class="help-block text-danger">Your password is required.</p>
+                                <span ng-show="loginForm.password.$invalid && loginForm.password.$dirty" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                <span ng-show="loginForm.password.$valid" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                            <input class="btn btn-lg btn-success btn-block" type="submit" value="Login"
+                                   ng-disabled="loginForm.$invalid" ng-click="login()">
+                            <div class="checkbox">
+                                <a href="#/signup" class="pull-right">register a new account!</a><br/>
+                                <a href="#/password-recovery" class="pull-right pass-forgotten"
+                                   ng-click="openRecoveryWiz()">
+                                     password forgotten?
+                                </a>
+                            </div>
+                            <img ng-src="{{loadingURL}}" ng-show="showLoading" style="width: 35px;" />
+                            <!--<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>-->
+							<div ng-repeat="(key,val) in alerts" class="alert {{key}}" id="login-error">
+								<div ng-repeat="msg in val">{{msg}}</div>
+							</div>
+
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--<ng-include src="'views/index/login/recovery_password.template.html'"></ng-include>-->
+
+

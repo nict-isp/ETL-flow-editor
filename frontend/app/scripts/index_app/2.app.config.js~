@@ -1,0 +1,13 @@
+(function () {
+
+    'use strict';
+
+    angular.module('tesi.indexApp')
+    .constant('env_config', {
+      apiURL: 'http://159.149.147.41:4567',
+    });
+    /*.constant('env_config', {
+      apiURL: 'http://localhost:4567',
+    });*/      
+
+})();

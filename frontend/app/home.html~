@@ -1,0 +1,111 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>ETL Dataflow ></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css" />
+    <link rel="stylesheet" href="bower_components/jquery-ui-timepicker/jquery.ui.timepicker.css" />
+    <link rel="stylesheet" href="bower_components/cytoscape-panzoom/font-awesome-4.0.3/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="bower_components/cytoscape-panzoom/cytoscape.js-panzoom.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    <!--<base href="/">-->
+  </head>
+  <body ng-app="tesi.homeApp" ng-controller="WorkflowCtrl">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <ng-include src="'views/master.template.html'"></ng-include>
+    <div class="container">
+		  <div id="content">
+		     <div id="cy"></div>
+		     <ng-include src="'views/workspace.template.html'"></ng-include>
+		     <ng-include src="'views/home.template.html'"></ng-include>
+		  </div>
+    </div>
+
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
+       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
+       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
+       }(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script src="bower_components/jquery-ui-timepicker/jquery.ui.timepicker.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/cytoscape/dist/cytoscape.js"></script>
+    <script src="bower_components/angular-modal-service/dst/angular-modal-service.min.js"></script>
+    <script src="bower_components/canvasjs/canvasjs.min.js"></script>
+    <script src="bower_components/cytoscape-panzoom/cytoscape-panzoom.js"></script>
+    <script src="bower_components/zeroclipboard/dist/ZeroClipboard.js"></script>
+    <script src="bower_components/ng-clip/src/ngClip.js"></script> 
+    <script src="bower_components/angular-filters/dist/angular-filters.js"></scrip   
+    <!-- endbower -->
+    <!-- endbuild -->
+
+	<!-- build:js({.tmp,app}) scripts/scripts.js -->
+	<!--<script src="scripts/home_app/app.js"></script>-->
+	<script src="scripts/home_app/1.app.module.js"></script>
+    <script src="scripts/home_app/2.app.config.js"></script>
+	<script src="scripts/home_app/3.app.routes.js"></script>
+	<script src="scripts/home_app/http/endpoint_url_generator.js"></script>
+	<script src="scripts/home_app/http/service_caller.js"></script>
+	<script src="scripts/home_app/http/service_dcn_caller.js"></script>
+	<script src="scripts/home_app/directives/email_availability.directive.js"></script>
+	<script src="scripts/home_app/directives/compare_password.directive.js"></script>
+	<script src="scripts/home_app/directives/workflow_availability.directive.js"></script>
+	<script src="scripts/home_app/directives/datepicker.directive.js"></script>
+	<script src="scripts/home_app/directives/timepicker.directive.js"></script>
+	<script src="scripts/home_app/directives/tooltip.directive.js"></script>
+	<script src="scripts/home_app/services/user.service.js"></script>
+	<script src="scripts/home_app/services/dcn.service.js"></script>
+	<script src="scripts/home_app/services/authorization.service.js"></script>
+	<script src="scripts/home_app/services/workflow.service.js"></script>
+	<script src="scripts/home_app/controllers/workflow.factory.js"></script>
+	<script src="scripts/home_app/alerts.manager.js"></script>
+	<!--<script src="scripts/home_app/controllers/modal.controller.js"></script>-->
+	<script src="scripts/home_app/controllers/workflow.controller.js"></script>
+	<script src="scripts/home_app/controllers/openworkflow.controller.js"></script>
+	<script src="scripts/home_app/controllers/newworkflow.controller.js"></script>
+	<script src="scripts/home_app/controllers/home.controller.js"></script>
+	<!-- endbuild -->
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('[data-toggle=tooltip]').hover(function(){
+                // on mouseenter
+                $(this).tooltip('show');
+            }, function(){
+                // on mouseleave
+                $(this).tooltip('hide');
+            });
+        });
+    </script>
+</body>
+</html>

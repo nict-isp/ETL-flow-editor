@@ -1,0 +1,34 @@
+<div class="container login-container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title" class="text-center">Password recovery</h3>
+                </div>
+                <div class="panel-body">
+
+                    <form name="recoveryForm" accept-charset="UTF-8" role="form" novalidate>
+                        <fieldset>
+                            <div class="form-group has-feedback" ng-class="{'has-success': recoveryForm.email.$valid,'has-error': recoveryForm.email.$invalid && recoveryForm.email.$dirty}">
+                                <input class="form-control" placeholder="type your email" name="email"
+                                       type="email" ng-model="emailAddress" required>
+                                <p ng-show="recoveryForm.email.$error.required && recoveryForm.email.$dirty"
+                                   class="help-block text-danger">Your email is required.</p>
+                                <p ng-show="recoveryForm.email.$error.email && recoveryForm.email.$dirty"
+                                   class="help-block text-danger">Email format not correct</p>
+                                <span ng-show="recoveryForm.email.$invalid && recoveryForm.email.$dirty" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                <span ng-show="recoveryForm.email.$valid" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                            <input class="btn btn-lg btn-success btn-block" type="submit" value="Send"
+                                   ng-disabled="recoveryForm.$invalid" ng-click="sendRecoveryEmail()">
+							<div ng-repeat="(key,val) in alerts" class="alert {{key}}" id="login-error">
+								<div ng-repeat="msg in val">{{msg}}</div>
+							</div>
+
+                        </fieldset>
+                    </form>                               
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

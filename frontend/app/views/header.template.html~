@@ -1,0 +1,202 @@
+    <!-- Add your site or application content here -->
+    <div class="header">
+      <div class="navbar navbar-default navbar-custom" role="navigation">
+        <div class="container">
+        
+        <div class="navbar-inner">
+            <button type="button" class="navbar-toggle pull-left animated flip" ng-click="toggleSidebar()">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- user dropdown ends -->
+        </div>        
+		<!-- -->
+      </div>
+    </div>
+                            
+<!-- MENU -->                            
+<header>
+    <div class="controls">
+		<div class="btn-toolbar">
+			<h1><a href="#/">Etl Dataflow</a></h1>			
+			<div class="btn-group margin-left-20">
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('Source')" 
+				        title="Add Source"
+				        ng-disabled="disableButtons"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="glyphicon glyphicon-tint"></span>
+				</button>
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('Filter')" 
+				        ng-disabled="disableButtons"
+				        title="Add Filter"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="glyphicon glyphicon-filter"></span>
+				</button>
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('CullTime')" 
+				        ng-disabled="disableButtons"
+				        title="Add Cull Time"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="glyphicon glyphicon-hourglass"></span>
+				</button>
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('CullSpace')" 
+				        ng-disabled="disableButtons"
+				        title="Add Cull Space"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="glyphicon glyphicon-globe"></span>
+				</button>
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('Aggregate')" 
+				        ng-disabled="disableButtons"
+				        title="Add Aggregate"
+				        style="height: 30px;"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				            <span class="icon-aggregate_2"></span>
+				        <!--<span class="glyphicon glyphicon-globe"></span>-->
+				</button>					
+				<!--<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('Destination')" 
+				        ng-disabled="disableButtons"
+				        title="Add Destination"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="icon-destination"></span>
+				</button>-->
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('Sax')" 
+				        ng-disabled="disableButtons"
+				        title="Add SAX"
+                        data-toggle="tooltip" data-placement="bottom" tooltip>				        
+				        SAX
+				</button>				
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('Join')" 
+				        ng-disabled="disableButtons"
+				        title="Add join"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <!--<span class="icon-destination"></span>-->
+				        JOIN
+				</button>
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('CSVJoin')" 
+				        ng-disabled="disableButtons"
+				        title="Add csv join"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <!--<span class="icon-destination"></span>-->
+				        CSV JOIN
+				</button>
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('Transform')" 
+				        ng-disabled="disableButtons"
+				        title="Apply functions to properties"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>				        
+				        Transform
+				</button>								
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('TriggerEvent')" 
+				        ng-disabled="disableButtons"
+				        title="Add TriggerEvent"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="glyphicon glyphicon-flash"></span>
+				</button>
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('TriggerOn')" 
+				        ng-disabled="disableButtons"
+				        title="Add TriggerOn"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="glyphicon glyphicon-flash">On</span>
+				</button>	
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('TriggerOff')" 
+				        ng-disabled="disableButtons"
+				        title="Add TriggerOff"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="glyphicon glyphicon-flash">Off</span>
+				</button>	
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="addNode('Destination')" 
+				        ng-disabled="disableButtons"
+				        title="Add Destination"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="icon-destination"></span>
+				</button>																										
+				<button class="btn btn-custom btn-sm"					        			       
+				        ng-class="{'green-background': canCreateEdge}" 
+					ng-click="enableEdge()"
+				        ng-disabled="disableButtons"
+				        title="Add Edge"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        <span class="glyphicon glyphicon-resize-horizontal"></span>				        
+				</button>			
+			</div>	
+			<div class="btn-group">
+				<button type="button" 
+				        class="btn btn-success btn-sm"
+				        ng-disabled="disableButtons">
+				        <span class="glyphicon glyphicon-play"></span>
+				</button>
+				<button type="button" 
+				        data-toggle="dropdown" 
+				        class="btn btn-success btn-sm dropdown-toggle"
+				        ng-disabled="disableButtons">
+				        <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<li><a href="#/dcn" ng-click="getJSON(false)" ng-if="dcnEnabled">DSN-SCN</a></li>
+					<li><a href="#" ng-if="!dcnEnabled" style="color: #CCC">DSN-SCN</a></li>
+					<li><a href="#" ng-click="startFlinkConverter()">Flink</a></li>			
+				</ul>			
+			</div>		
+			<!--<div class="btn-group margin-left-20">
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="startWebSocket()" 
+				        ng-disabled="disableButtons"
+				        title="start communication"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        Start
+				</button>
+				<button type="button" 
+				        class="btn btn-custom btn-sm" 
+				        ng-click="stopWebSocket()" 
+				        ng-disabled="disableButtons"
+				        title="stop communication"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+				        Stop
+				</button>								
+			</div>-->
+			<!-- user dropdown starts -->
+			<div class="btn-group pull-right" ng-controller="HomeCtrl">
+				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<i class="glyphicon glyphicon-user"></i><span class="hidden-sm hidden-xs"> {{user.name}}</span>
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<li><a href="#/preferences">Preferences</a></li>
+					<li class="divider"></li>
+					<li><a href="#" ng-click="logout()">Logout</a></li>
+				</ul>
+			</div> 
+		</div> 		                                       
+    </div>
+</header>

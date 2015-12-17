@@ -1,0 +1,253 @@
+(function(){
+
+  'use strict';
+
+  angular.module('tesi.homeApp').service('workflowService', workflowService);
+
+  function workflowService($q, serviceCaller){
+
+        function _getWorkflows() {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/workflows",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+
+        function _getWorkflow(id) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/workflow/" + id,{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+
+        function _createWorkflow(workflowName) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("POST","api/v1/workflow",{},{workflowName:workflowName})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+        
+        function _createSaveDefaultWorkflow(workflow) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("POST","api/v1/workflow/default",{},{workflow_data:workflow})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }        
+
+        function _checkWorkflow(workflowName) {
+            return serviceCaller.doRequest("POST", "api/v1/workflow/check",{},{workflowName:workflowName});
+        }
+
+        function _saveWorkflow(workflowId, workflow) {
+		    return serviceCaller.doRequest('PUT', 'api/v1/workflow/' + workflowId, {}, {workflow:workflow});
+		}
+
+        function _deleteWorkflow(workflowId) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("DELETE","api/v1/workflow",{},{workflowId:workflowId})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+
+        function _getCategories() {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/categories",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+        
+        function _getSchema(sensor_type) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/schema/" + sensor_type,{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+        
+        function _getSchemas() {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/schemas",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }    
+        
+        function _getCSVByID(id) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/join_csv/"+id,{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }      
+        
+        function _getCSV(workflowID, nodeID) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/workflow/"+workflowID+"/join_csv/"+nodeID,{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+                                   
+        function _getTransformFunctions() {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/transform_functions",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        } 
+        
+        function _getVirtualFunctions() {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("GET","api/v1/virtual_functions",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+					 deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+        
+        function _OpenWebSocket(workflow) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("POST","api/v1/WebSocket/start",{},{})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }
+        
+        function _StartFlinkConverter(workflow) {
+			var deferred = $q.defer();
+            serviceCaller.doRequest("POST","api/v1/flink/convert",{},{workflow:workflow})
+            .then(function(response){
+                 if(serviceCaller.isSuccessResponse(response)){
+                   deferred.resolve(response);
+                 }
+                 else{
+                   deferred.reject(response);
+                 }
+            });
+
+            return deferred.promise;
+        }                                                           
+
+        return{
+            getWorkflows: _getWorkflows,
+            getWorkflow: _getWorkflow,
+            checkWorkflow: _checkWorkflow,
+            createWorkflow: _createWorkflow,
+            createSaveDefaultWorkflow: _createSaveDefaultWorkflow,
+            saveWorkflow: _saveWorkflow,
+            deleteWorkflow: _deleteWorkflow,
+            getCategories: _getCategories,
+            getSchema: _getSchema,
+            getSchemas: _getSchemas,
+            getCSVById: _getCSVByID,
+            getCSV: _getCSV,
+            getTransformFunctions: _getTransformFunctions,
+            getVirtualFunctions: _getVirtualFunctions,
+            openWebSocket: _OpenWebSocket,
+            flinkConverter: _StartFlinkConverter
+        }
+
+
+  }
+
+
+
+
+
+})();

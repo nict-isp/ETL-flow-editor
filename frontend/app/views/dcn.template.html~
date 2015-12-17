@@ -1,0 +1,95 @@
+<!--<div class="template-container" style="width: 100%;
+										background: #fff;
+										height: 100%;
+										position: relative;
+										padding-top: 50px;
+										z-index: 100000;" >
+
+  <div ng-repeat="(key,val) in alerts" class="dcn-error alert {{key}}" id="login-error">
+	<div ng-if="key == 'alert-danger'">
+      <img src="images/error.svg" class="error-image" /><div ng-repeat="msg in val">{{msg}}</div>
+    </div>
+    <div ng-if="key == 'alert-success'">
+      <span class="glyphicon glyphicon-ok" style="float: left; padding-right: 10px;"></span>
+      <div ng-repeat="msg in val">{{msg}}</div>
+    </div>
+  </div>  
+  <img ng-src="{{loadingURL}}" ng-show="showLoading" style="width: 35px; margin-bottom: 30px;" />
+  {{ jsonDCN }}
+	  
+  <div class="container-fluid signup-container">
+    <h4 style="margin: -25px 0px 25px 0px">DSN Code</h4> -->       
+		<!-- DCN -->    
+		<!--<textarea class="form-control" rows="22" ng-model="dcn" id="dcn-textarea">
+		{{ dcn }}
+		</textarea>  
+		<a href="#/" class="btn btn-default ng-isolate-scope">Back</a>
+		<button class="btn btn-default ng-isolate-scope" clip-copy="dcn">Copy</button>		
+  </div>  
+</div>-->
+
+<div class="template-container" style="width: 100%;
+										background: #fff;
+										height: 100%;
+										position: relative;
+                                       padding-top: 50px;
+										z-index: 1000000;
+                                        margin-top: 20px;
+                                        " >
+
+  <!--{{ jsonDCN }}-->
+  <!--<div class="container-fluid signup-container" data-ng-init="getJSON()">-->
+  <div style="background: #fff;height: 100%;position: fixed;z-index: 999999;">
+    </div>
+  <div id="dsnx">
+    <h4 style="margin: -25px 0px 40px 0px">DCN Code</h4>
+          <div ng-repeat="(key,val) in alerts" class="dcn-error alert {{key}}" id="login-error">
+            <div ng-if="key == 'alert-danger'">
+              <img src="images/error.svg" class="error-image" /><div ng-repeat="msg in val">{{msg}}</div>
+            </div>
+            <div ng-if="key == 'alert-success'" style="left:2%;">
+              <span class="glyphicon glyphicon-ok" style="float: left; padding-right: 10px;"></span>
+              <div ng-repeat="msg in val">{{msg}}</div>
+            </div>
+          </div>  
+  <img ng-src="{{loadingURL}}" ng-show="showLoading" style="width: 35px; margin-bottom: 30px;" />
+        <p>Service Cooperation Name: <input type="text"></p>
+		<!-- DCN -->    
+		<textarea class="form-control" rows="22" ng-model="dcn" id="dcn-textarea">
+		{{ dcn }}
+		</textarea><br/>
+		<a href="#/" class="btn btn-default ng-isolate-scope">Back</a>
+		<button class="btn btn-default ng-isolate-scope" clip-copy="dcn">Copy</button>	
+        <button class="btn btn-default2 ng-isolate-scope" id="senddsn">Start Workflow</button>
+  </div>  
+  <div id="logg">
+    <h4 style="margin: -25px 0px 10px 0px">Event State</h4>
+        <div data-name="event" id="event_box">
+        <table id="event_table" class="event_table">
+           <tr>
+               <th class="td_no">No</th>
+               <th>event name</th>
+               <th>status</th>
+           </tr>
+        </table>
+        </div>
+      <h4 style="margin: -25px 0px 10px 0px">DSN Execution State</h4>
+        <div data-name="condition" id="condition_box">
+        <table id="condition_table" class="condition_table">
+            <tr>
+                <th class="td_no">No</th>
+                <th>condition</th>
+                <th>status</th>
+                <th>scratch</th>
+                <th>channel</th>
+                <th>expected</th>
+                <th>actual</th>
+            </tr>
+        </table>
+      </div>
+      <h4 style="margin: -25px 0px 10px 0px">DSN Execution Log</h4>
+      <div data-name="log" id="logdata_box">
+      </div>
+        </div>  
+</div>
+

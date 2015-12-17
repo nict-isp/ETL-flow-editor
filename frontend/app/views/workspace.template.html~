@@ -1,0 +1,2667 @@
+<!--
+  ALERT
+-->
+	<div ng-repeat="(key,val) in alerts" class="alert {{key}}" ng-show="showCustomAlert"
+		 style="margin-top: 18px;
+				margin-left: 77%;
+				position: absolute;
+				min-width: 150px;
+				max-width: 300px;">
+		<div ng-repeat="msg in val">
+			<a href="#" ng-click="closeAlerts()" style="float: left; padding-right: 5px;"><span ng-if="key == 'alert-success'" class="glyphicon glyphicon-ok"></span></a>
+			<a href="#" ng-click="closeAlerts()" style="float: left; padding-right: 5px;"><span ng-if="key == 'alert-danger'" class="glyphicon glyphicon-remove"></span></a>
+			<div ng-bind-html="renderHTML(msg)"></div>
+		</div>
+	</div> 
+<!--
+  SAVE WORKFLOW IF DEFAULT
+-->	
+<div class="template-container" 
+     style="width: 100%;
+			background: #fff;
+			height: 100%;
+			position: relative;
+			padding-top: 50px;
+			z-index: 999999;" 
+	 ng-show="showSaveDefaultWorkflow">
+
+  <div class="container-fluid signup-container">
+	  <div class="col-md-4"></div>
+	  <div class="col-md-4 text-center"><h4 style="margin: -25px 0px 25px 0px">Save dataflow</h4></div>
+	  <div class="col-md-4"></div>
+	  <form name="workflowForm" accept-charset="UTF-8" role="form"  novalidate>
+		<div class="row top-buffer">
+		  <div class="form-group" style="margin-top: 20px;"
+		  ng-class="{'has-success': workflowForm.name.$valid,'has-error': workflowForm.name.$invalid && workflowForm.name.$dirty}">
+
+			  <input class="form-control input-sm new-workflow-name"
+					placeholder="Workflow name..."
+					name="name"
+					type="text"
+					ng-model="workflow.rename"
+					check-workflow
+					style="width: 200px;"
+					required>									   				
+		  </div>
+		  <div class="row">
+                    <div class="col-md-4"></div>	 
+                    <div ng-show="workflowForm.name.$error.checkWorkflow && workflowForm.name.$dirty"
+					   class="col-md-4 help-block text-danger text-center"
+					   style="color: #d43f3a;">
+					   Project already exists
+                    </div>
+                    <div class="col-md-4"></div>
+                  </div>
+                  <div style="width: 200px; margin: 0 auto;">
+                    <input class="btn btn-default ng-isolate-scope" 
+                           type="button" 
+                           value="back"
+                           ng-click="hideSaveDefaultWorkflow()" 
+                           style="float: left; margin-left: 20px;" />
+                    <input class="btn btn-default btn-success center-block" 
+                           type="button" value="Create"                           
+				           ng-disabled="workflowForm.$invalid" 
+				           ng-click="createSaveDefaultWorkflow()" 				           
+				           data-dismiss="modal">
+                  </div>
+	   </form>    
+  </div>
+
+</div>
+</div>
+
+	
+	{{ json_obj }}
+<!--
+--
+-- SOURCES
+--
+--> 
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'source'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1">           
+				   <span class="glyphicon glyphicon-tint"></span>				   
+				   Source
+          </a>
+        </li>
+        <li>
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>
+        <li>
+          <a href="#sample-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-stats"></span>
+            Sample
+          </a>
+        </li>
+        <li>
+          <a href="#stream-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>   
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+		  </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content max-height-220">
+
+			<!-- 
+			  Source detail tab 
+			-->
+			<div class="tab-pane active" id="detail-tab">			
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-2">
+								<h5>Source Name</span></h5>
+								<input type="text" id="name_{{node.data.id}}" value="{{ node.data.name }}"
+								   ng-model="node.data.name" ng-change="changeNodeName(node)"
+								   class="form-control input-sm tab-node-name" />	
+							</div>
+							<div class="col-md-4">
+								<h5>Table</span></h5>
+								<input type="text" name="table" value="{{ node.data.table }}"
+								   ng-model="node.data.table" ng-change="changeNodeTable(node)"
+								   class="form-control input-sm tab-node-name" />	
+							</div>							
+						</div>
+						<div class="row tab-row">
+							<div class="col-md-2">
+								<h5>Category</h5>
+								<select class="form-control tab-node-name" 
+								        ng-model="selectedSourceCategories[node.data.pos]" 
+								        ng-options="c as c.name for c in sourceCategories track by c.name">
+								  <option value="">Select Category</option>
+								</select>					
+							</div>
+							<div class="col-md-4">
+								<h5>Source Type</h5>
+								<select class="form-control tab-node-name"
+									ng-model="selectedSourceTypes[node.data.pos]"
+									ng-options="t as t.name for t in sourceTypes track by t.name"
+									ng-change="setNodeSchema(node, selectedSourceTypes[node.data.pos].name)">
+									<option value="">Select type</option>									
+								</select>								
+							</div>							
+						</div>						
+					</div>
+			</div>
+			<!-- 
+			  Source schema tab 
+			-->
+			<div class="tab-pane" id="schema-tab">
+                <div ng-if="node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">
+					<ul class="list-inline margin-left-20">
+						<li ng-repeat="property in sortSchemaObj(node.data.schema.m2m_data_schema)">
+							<label class="checkbox" style="padding-right:45px">					
+								<input 
+								    type="checkbox" 
+								    value="{{property.name}}"
+								    ng-model="schemaPropertiesSelected[node.idx][$index]"
+								    ng-change="propagateSourceProperty(node.data.id, node.idx, $index, property)">
+								    {{property.name}}
+								    ({{property.type}})
+							</label>				
+						</li>
+					</ul>					
+                </div>                
+                <div ng-if="!node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">
+                Please specify sensor type in source tab.
+                </div>
+			</div>			
+            <!-- 
+              end schema tab 
+            -->		
+			<!-- 
+			  Sample tab
+			-->
+			<div class="tab-pane tab-content scroll2 max-height-220-overflow" id="sample-tab">
+                <div ng-if="node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">    
+                   <table class="table table-bordered">
+					   <thead>
+						  <tr>
+							 <th ng-repeat="(key, val) in getSelectedSample(node)">
+								 {{ key }}
+							 </th>
+						  </tr>
+					   </thead>
+					   <tbody>
+						  <tr ng-repeat="key_value in node.data.schema.sample"><!-- filterSample(node) -->
+							 <td ng-repeat="(key_y, value_y) in key_value" ng-show="sample_keys.indexOf(key_y)!=-1">{{value_y}}</td>
+						  </tr>
+					   </tbody>
+					</table>
+                </div>
+                <div ng-if="!node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">
+                Please specify sensor type in source tab.
+                </div>
+			</div>  
+			<!--
+			  end Sample tab
+			-->  	
+			<!-- 
+			  Stream tab
+			-->
+			<div class="tab-pane scroll2 max-height-220-overflow" id="stream-tab">				
+				<div class="row">
+					<div class="row tab-row top-buffer">
+						<div class="col-md-2">
+							<h5><b>Elapsed time</b></h5>
+							{{flink_elapsed_time}} <i>seconds</i>
+						</div>
+						<div class="col-md-2">
+							<h5><b>Rate</b></h5>
+							{{flink_rate}} <i>tuple/second</i>
+						</div>						
+					</div>
+				</div>
+                <div id="chartContainer" style="height: 200px; width: 100%; margin-top:0px;">					           
+                </div>				                
+			</div>  
+			<!--
+			  end Stream tab
+			-->  					
+		</div>
+	  </div>
+	</div>					
+	
+<!--
+--
+-- FILTERS
+--
+-->
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'filter'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1">           
+				   <span class="glyphicon glyphicon-filter"></span>
+				   Filter
+          </a>
+        </li>
+        <li ng-show="canShowSchemaTab(node)">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>        
+       
+        <li>
+          <a href="#stream-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>  
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>              
+		  </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+
+			<!-- 
+			  Filter detail tab 
+			-->
+			<div class="tab-pane active" id="detail-tab">
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-4">
+								<h5 
+								    style="float: left;
+                                           padding-right: 10px;"                                
+                                >Filter Name</span></h5>
+								<input type="text" id="name_{{node.data.id}}" value="{{ node.data.name }}"
+								   ng-model="node.data.name" ng-change="changeNodeName(node)"
+								   class="form-control input-sm tab-node-name" />	
+							</div>
+						</div>						
+						<div class="row tab-row top-buffer">		
+	
+							<!-- Ciclo l'elenco dei filtri del nodo -->		
+							   <div class="col-sm-7 pull-left well" 
+							        style="margin-bottom: -15px;
+											border-bottom: 1px solid #f5f5f5;
+											z-index: 100;">
+						  <div ng-if="node.data.hasOwnProperty('schema')">							  
+                             <div ng-repeat="c in filterConditions[node.data.pos]" style="margin-bottom: 5px;">
+								   <a href="#" class="btn btn-sm btn-danger"
+								      style="float:left; margin-left: 5px; margin-right: 5px;" 
+								      ng-click="removeFilterCondition(node, c)">
+									   <span class="glyphicon glyphicon-trash"></span>
+								   </a>  				
+								   			    								   
+							     <div class="input-group" id="f{{ filterConditions[node.data.pos].indexOf(c) }}" style="width: 425px;"> <!--col-sm-8 -->									          					    								        
+									    <select class="form-control tab-node-name"
+											ng-if="joinBeforeNode(node)"
+									        style="width: 125px;"
+									        ng-class="{'error-condition': filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].attribute == undefined}"
+										    ng-model="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].attribute"
+										    ng-options="(attr.node_name + '.' + attr.name) for attr in node.data.schema.m2m_data_schema track by attr.node_name + '.' + attr.name"> 
+										    <option value="">Attribute</option>										    
+								        </select>
+									    <select class="form-control tab-node-name"
+									        ng-if="!joinBeforeNode(node)"
+									        style="width: 125px;"
+									        ng-class="{'error-condition': filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].attribute == undefined}"
+										    ng-model="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].attribute"
+										    ng-options="attr.name for attr in node.data.schema.m2m_data_schema track by attr.name"> 
+										    <option value="">Attribute</option>										    
+								        </select>								        							          
+											<!-- SE RANGE O NOT RANGE -->				   									   									   									  
+										    <select class="form-control tab-node-name"
+										            ng-if="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								                      filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'"
+								                    ng-class="{'error-condition': filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator == undefined}"
+											        style="width: 105px;" 
+											        ng-model="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator" 
+											        ng-options="o.symbol for o in operators track by o.symbol">
+											        <option value="">Operator</option>											 
+										    </select>
+										    <!-- ALTRIMENTI -->
+										    <select class="form-control tab-node-name"
+										            ng-if="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol != 'RANGE' &&
+								                      filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol != 'NOT RANGE'"
+								                    ng-class="{'error-condition': filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator == undefined}"
+											        style="width: 135px;" 
+											        ng-model="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator" 
+											        ng-options="o.symbol for o in operators track by o.symbol">
+											        <option value="">Operator</option>											 
+										    </select>										    								   								        
+								        <!-- SE INPUT TYPE == RANGE -->
+								        <input ng-if="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								                      filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'" 
+								           type="text" class="form-control" 
+								           ng-class="{'error-condition': filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value1 == undefined
+								                                  || filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value1 == ''}"
+								           ng-model="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value1" 
+								           style="width: 82px;"
+								           placeholder="from value" 
+								           value="{{ c.range_from }}"/>
+								        <input ng-if="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								                      filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'" 
+								           ng-class="{'error-condition': filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value2 == undefined
+								                                 || filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value2 == ''}"
+								           type="text" class="form-control"
+								           style="width: 82px;"
+								           ng-model="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value2" 
+								           placeholder="to value" 
+								           value="{{ c.range_to }}"/>								           
+								        <!-- SE INPUT TYPE != RANGE -->				        						 
+								        <input ng-if="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol != 'RANGE' &&
+								                      filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].operator.symbol != 'NOT RANGE'"
+                                           ng-class="{'error-condition': filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value == undefined
+                                                                 || filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value == ''}"								                      
+								           type="text" class="form-control"
+								           style="width: 135px;" 
+								           ng-model="filterConditions[node.data.pos][filterConditions[node.data.pos].indexOf(c)].value" 
+								           placeholder="value" 
+								           value="{{ c.value }}"/>								           								          
+								           <span style="float: right; margin-top: 7px;" ng-if="$last==false">{{filterConditionsLogicOperator[node.data.pos]}}</span>
+						         </div>                                              
+						       </div>
+						     </div>
+						     <div ng-if="node.data.hasOwnProperty('schema')==false">
+						        To add conditions you must connect Filter to an object with schema setted up.
+						     </div>
+						   </div>
+						</div>
+						<div class="row tab-row top-buffer" style="margin-top: 0px !important;">	
+							<div class="col-sm-7 pull-left well" style="margin-bottom: 0px; margin-top: -10px;">
+								<form class="form-inline">
+									<button type="button"
+									        ng-show="showANDbutton[node.data.pos]" 									        
+											class="btn btn-success btn-sm" 
+											style="margin-left: 5px; z-index: 100; position: relative;"
+											ng-click="addFilterCondition('AND', node)"
+											ng-disabled="isButtonDisabled(node)==true"
+                                            title="Add filter condition"
+                                            data-toggle="tooltip" data-placement="bottom" tooltip>
+											<span class="glyphicon glyphicon-plus"> AND</span>
+									</button>
+									<button type="button"
+									        ng-show="showORbutton[node.data.pos]" 
+											class="btn btn-success btn-sm" 
+											style="margin-left: 5px; z-index: 100; position: relative;"
+											ng-click="addFilterCondition('OR', node)"
+											ng-disabled="isButtonDisabled(node)==true"
+                                            title="Add filter condition"
+                                            data-toggle="tooltip" data-placement="bottom" tooltip>
+											<span class="glyphicon glyphicon-plus"> OR</span>
+									</button>																											
+							  </form>							  
+							</div>							
+						</div>						
+					</div>
+			</div>
+            <!-- 
+              end detail tab 
+            -->
+			<!-- 
+			  Filter schema tab 
+			-->
+			<div class="tab-pane" id="schema-tab">
+                <div ng-if="node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">								
+					<span class="btn btn-primary" style="margin-bottom:10px;">Schema {{ node.data.schema.sensor_type }}</span>
+                    <ul class="list-inline" stye="border: 1px solid #ccc; margin-left: 0px; height: 33px;">						
+						<li bindonce ng-repeat="property in node.data.schema.m2m_data_schema" style="list-style-type: none;">																	
+                            <span bindonce ng-if="property.selected==true && property.id != undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id != undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==true  && property.id == undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id == undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>                                  
+						</li>
+					</ul>											
+			    </div>			    
+			</div>			
+            <!-- 
+              end schema tab 
+            -->		             	
+			<!-- 
+			  Stream tab
+			-->
+			<div class="tab-pane" id="stream-tab">
+				<h1>Stream</h1>
+				<p>red red red red red red</p>
+			</div>  
+			<!--
+			  end Stream tab
+			-->  					
+		</div>
+	  </div>
+	</div>
+	
+	
+	
+	
+<!--
+--
+-- DESTINATIONS
+--
+-->
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'destination'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1">           				   
+				   <span class="icon-destination"></span>				   
+				   Destination
+          </a>
+        </li>
+        <li ng-if="node.data.schemas.length > 0">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>         
+        <li>
+          <a href="#stream-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>   
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+		  </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content max-height-220">
+			<div class="tab-pane active" id="detail-tab">
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-4">
+								<h5>Destination Name</span></h5>
+								<input type="text" id="name_{{node.data.id}}" value="{{ node.data.name }}"
+								   ng-model="node.data.name" ng-change="changeNodeName(node)"
+								   class="form-control input-sm tab-node-name" />						   								 
+							</div>
+						</div>
+						<div class="row tab-row">
+							<div class="col-md-2">
+								<h5>Category</h5>
+								<select class="form-control tab-node-name" 
+								        ng-model="selectedDestinationCategories[node.data.pos]" 
+								        ng-options="c as c.name for c in destinationSourceCategories track by c.name">
+								  <option value="">Select Category</option>
+								</select>					
+							</div>
+							<div class="col-md-4">
+								<h5>Source Type</h5>
+								<select class="form-control tab-node-name"
+									ng-model="selectedDestinationTypes[node.data.pos]"
+									ng-options="t as t.name for t in destinationSourceTypes track by t.name">
+									<option value="">Select type</option>
+								</select>
+							</div>
+						</div>
+					</div>
+			</div>			
+            <!-- 
+              end detail tab 
+            -->
+			<div class="tab-pane tab-content scroll2 max-height-220-overflow" id="schema-tab">						
+                <div ng-if="node.data.hasOwnProperty('schemas')" class="row tab-row top-buffer">
+					<ul stye="border: 1px solid #ccc; margin-left: -30px; height: 33px;">
+						<li ng-repeat="(key, value) in node.data.schemas | countBy: 'sensor_type'" style="list-style-type: none;">
+							<span class="btn btn-primary"
+							      style="margin-bottom: 10px;">
+							    Schema {{ key }} <span class="badge">{{ value }}</span>
+							</span>
+							<ul  ng-repeat="schema in getSchemasArrayByType(key, node.data.schemas)"
+							     class="list-inline">			
+								<li bindonce ng-repeat="property in schema.m2m_data_schema" style="list-style-type: none;">																	
+									<span bindonce ng-if="property.selected==true && property.id != undefined"
+										  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+									<span bindonce ng-if="property.selected==false && property.id != undefined"
+										  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+									<span bindonce ng-if="property.selected==true  && property.id == undefined"
+										  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>
+									<span bindonce ng-if="property.selected==false && property.id == undefined"
+										  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>										        										  
+								</li>								
+							</ul>						
+						</li>
+					</ul>
+                </div>
+			</div>							
+            <!-- 
+              end schema tab 
+            -->	             	
+			<!-- 
+			  Stream tab
+			-->
+			<div class="tab-pane scroll2 max-height-220-overflow" id="stream-tab">				
+				<div class="row">
+					<div class="row tab-row top-buffer">
+						<div class="col-md-2">
+							<h5><b>Elapsed time</b></h5>
+							{{flink_elapsed_time}} <i>seconds</i>
+						</div>
+						<div class="col-md-2">
+							<h5><b>Rate</b></h5>
+							{{flink_rate}} <i>tuple/second</i>
+						</div>						
+					</div>
+				</div>
+                <div id="chartContainer" style="height: 200px; width: 100%; margin-top:0px;">					           
+                </div>				                
+			</div>  			
+			<!--
+			  end Stream tab
+			-->  					
+		</div>
+	  </div>
+	</div>	
+	
+
+<!--
+--
+-- CULLTIME
+--
+-->
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'cull_time'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1">           
+            <span class="glyphicon glyphicon-hourglass"></span>				   
+			CullTime
+          </a>
+        </li>
+        <li ng-show="canShowSchemaTab(node)">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>       
+        <li>
+          <a href="#stream-tab" data-toggle="tab" ng-click="startChart()">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>   
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+      </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+			<div class="tab-pane active" id="detail-tab">
+			  <!--<form id="ctForm">-->
+				<table id="culltime-table">
+				  <tr>
+				    <td>
+						<h5>Object name</span></h5>
+						<input type="text" 
+						       id="name_{{node.data.id}}"
+						       value="{{ node.data.name }}"
+						       style="width: 80px;"
+						       ng-model="node.data.name" ng-change="changeNodeName(node)"
+						       class="form-control input-sm tab-node-name" />				    
+				    </td>
+				    <td>
+						<h5>Numerator</h5>
+						<input type="text"
+							   style="width: 80px;" 
+							   name="numerator" 
+							   id="numerator_{{node.data.id}}"
+							   class="form-control input-sm"
+							   ng-model="culltimeSettings[node.data.pos].numerator" 							   
+							   ng-change="validateNumber(culltimeSettings[node.data.pos].numerator, 1, false, node.data.id, 'numerator')"
+							   value="{{culltimeSettings[node.data.pos].numerator}}"
+							   />								   			    
+				    </td>
+				    <td>
+						<h5>Denominator</h5>
+						<input type="text"
+							   style="width: 80px;"
+							   name="denominator"  
+							   id="denominator_{{node.data.id}}"
+							   class="form-control input-sm"
+							   ng-model="culltimeSettings[node.data.pos].denominator" 
+							   ng-change="validateNumber(culltimeSettings[node.data.pos].denominator, 1, false, node.data.id, 'denominator')"
+							   value="{{culltimeSettings[node.data.pos].denominator}}"/
+							   />								   
+				    </td>
+				    <td>
+						<h5>Time Data Name</h5>
+						<input type="text" 
+							   class="form-control input-sm"
+							   style="width: 80px;"
+							   ng-model="culltimeSettings[node.data.pos].time_data_name"							  
+							   value="{{culltimeSettings[node.data.pos].time_data_name}}"
+							   />					    
+				    </td>
+				    <td>
+						<h5>Time Interval</h5>						
+						<input type="number"
+							   style="width: 80px;" 
+							   name="time_interval" 
+							   class="form-control input-sm"
+							   ng-model="culltimeSettings[node.data.pos].time_interval" 
+							   min="1"							   					   
+							   value="{{culltimeSettings[node.data.pos].time_interval}}"
+							   ng-class="{'success': ctForm.time_interval.$valid, 
+							              'error-condition': ctForm.time_interval.$invalid && ctForm.time_interval.$dirty}"
+							   />			                       				                         
+					</td>				    
+				  </tr>
+				  <tr>
+				    <td>
+						<h5>Start Date</h5>
+                        <input type="text" 
+                               style="width: 90px;" 
+                               class="start_date_{{node.data.id}}" 
+                               name="start_date"                                                            
+                               datepicker                                
+                               ng-model="culltimeSettings[node.data.pos].start_date"
+                        />
+				    </td>
+				    <td>
+						<h5>Start Time</h5>			
+						<input type="text" 
+						       style="width: 80px;"
+						       timepicker
+						       ng-model="culltimeSettings[node.data.pos].start_time"
+						       class="form-control input-sm" />						       		    
+				    </td>
+				    <td>											
+						<h5>End Date</h5>
+                        <input type="text" 
+                               style="width: 90px;" 
+                               class="end_date_{{node.data.id}}"
+                               name="end_date"
+                               datepicker 
+                               ng-model="culltimeSettings[node.data.pos].end_date" />
+					</td>
+					<td>
+						<h5>End Time</h5>			
+						<input type="text" 
+						       style="width: 80px;"
+						       timepicker
+						       ng-model="culltimeSettings[node.data.pos].end_time"
+						       class="form-control input-sm" />										    
+				    </td>
+					<td>
+						<h5>Time Unit</h5>
+						<select class="form-control tab-node-name"
+							ng-model="culltimeSettings[node.data.pos].time_unit"
+							ng-options="t as t.name for t in timeUnit track by t.name">
+							<option value="">Select time unit</option>
+						</select>				    
+				    </td>
+				  </tr>
+				</table> 
+			</div>
+			<!-- 
+			  culltime schema tab 
+			-->
+			<div class="tab-pane" id="schema-tab">
+                <div ng-if="node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">								
+					<span class="btn btn-primary" style="margin-bottom:10px;">Schema {{ node.data.schema.sensor_type }}</span>
+                    <ul class="list-inline" stye="border: 1px solid #ccc; margin-left: 0px; height: 33px;">						
+						<li bindonce ng-repeat="property in node.data.schema.m2m_data_schema" style="list-style-type: none;">																	
+                            <span bindonce ng-if="property.selected==true && property.id != undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id != undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==true  && property.id == undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id == undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>                                                                   
+						</li>						
+					</ul>
+			    </div>			    
+			</div>										
+            <!-- 
+              end schema tab 
+            -->	
+
+			<div class="tab-pane" id="stream-tab">
+                <div id="chartContainer" style="height: 200px; width: 100%;"></div>
+			</div>  
+					
+		  </div>
+	  </div>
+	</div>
+
+<!--
+--
+-- CULLSPACE
+--
+-->
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'cull_space'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1">           
+				   <span class="glyphicon glyphicon-globe"></span>			   
+				   CullSpace
+          </a>
+        </li>
+        <li ng-show="canShowSchemaTab(node)">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>         
+        <li>
+          <a href="#stream-tab" data-toggle="tab" ng-click="startChart()">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>   
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+      </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+			<div class="tab-pane active" id="detail-tab">
+			  <form name="{{node.data.id}}csForm">
+				<table id="cullspace-table">
+				  <tr>
+				    <td>
+						<h5>Object name</span></h5>
+						<input type="text" id="name_{{node.data.id}}"
+						       value="{{ node.data.name }}"
+						       ng-model="node.data.name" 
+						       ng-change="changeNodeName(node)"
+						       class="form-control input-sm tab-node-name" 
+						       style="width: 80px;" />					    
+				    </td>
+				    <td>
+						<h5>Numerator</h5>
+						<input type="text"
+							   style="width: 80px;" 
+							   name="numerator"
+							   id="numerator_{{node.data.id}}"
+							   min="1"
+							   class="form-control input-sm"
+							   ng-change="validateNumber(cullspaceSettings[node.data.pos].numerator, 1, false, node.data.id, 'numerator')"
+							   ng-model="cullspaceSettings[node.data.pos].numerator" 
+							   value="{{cullspaceSettings[node.data.pos].numerator}}"
+							   required />								   
+				    </td>
+				    <td>
+						<h5>Denominator</h5>
+						<input type="text"
+							   style="width: 80px;" 
+							   name="denominator"
+							   id="denominator_{{node.data.id}}"
+							   class="form-control input-sm"
+							   ng-model="cullspaceSettings[node.data.pos].denominator" 
+							   ng-change="validateNumber(cullspaceSettings[node.data.pos].denominator, 1, false, node.data.id, 'denominator')"
+							   value="{{cullspaceSettings[node.data.pos].denominator}}"
+							   required />								   				    
+				    </td>
+				    <td>
+						<h5>North</h5>
+						<input type="text" 
+							   class="form-control input-sm"
+							   name="north"
+							   id="north_{{node.data.id}}"
+							   min="-90"
+							   max="90"
+							   style="width: 80px;"
+							   ng-model="cullspaceSettings[node.data.pos].north" 
+							   ng-change="validateNumber(cullspaceSettings[node.data.pos].north, -90, 90, node.data.id, 'north')"
+							   value="{{cullspaceSettings[node.data.pos].north}}"
+							   required />							   						
+					</td>
+					<td>
+						<h5>South</h5>						
+						<input type="text" 
+							   class="form-control input-sm"
+							   name="south"
+							   id="south_{{node.data.id}}"
+							   style="width: 80px;"
+							   ng-model="cullspaceSettings[node.data.pos].south" 
+							   value="{{cullspaceSettings[node.data.pos].south}}"
+							   ng-change="validateNumber(cullspaceSettings[node.data.pos].south, -90, 90, node.data.id, 'south')"
+							   required />							   
+                    </td>
+                    <td>
+						<h5>East</h5>
+						<input type="text" 
+							   class="form-control input-sm"
+							   name="east"
+							   id="east_{{node.data.id}}"
+							   style="width: 80px;"
+							   ng-model="cullspaceSettings[node.data.pos].east" 
+                               ng-change="validateNumber(cullspaceSettings[node.data.pos].east, -180, 180, node.data.id, 'east')"							   
+							   value="{{cullspaceSettings[node.data.pos].east}}"
+							   required />							   
+				    </td>
+				    <td>
+						<h5>West</h5>
+						<input type="text" 
+							   class="form-control input-sm"
+							   name="west"
+							   id="west_{{node.data.id}}"							   						  
+							   style="width: 80px;"
+							   ng-model="cullspaceSettings[node.data.pos].west"
+							   ng-change="validateNumber(cullspaceSettings[node.data.pos].west, -180, 180, node.data.id, 'west')" 
+							   value="{{cullspaceSettings[node.data.pos].west}}"
+							   required />								   																		   
+				    </td>
+				  </tr>
+				  <tr>
+					<td>
+						<h5>lat data name</h5>
+						<input type="text" 
+							   class="form-control input-sm"
+							   style="width: 80px;"
+							   ng-model="cullspaceSettings[node.data.pos].lat_data_name" 
+							   value="{{cullspaceSettings[node.data.pos].lat_data_name}}"/>						  
+					</td>						
+					<td>
+						<h5>long data name</h5>
+						<input type="text" 
+							   class="form-control input-sm"
+							   style="width: 80px;"
+							   ng-model="cullspaceSettings[node.data.pos].long_data_name" 
+							   value="{{cullspaceSettings[node.data.pos].long_data_name}}"/>												
+                    </td>
+                    <td>
+						<h5>Latitude Interval</h5>
+						<input type="text" 
+							   style="width: 80px;"
+							   class="form-control input-sm"
+							   ng-model="cullspaceSettings[node.data.pos].lat_interval" 
+							   value="{{cullspaceSettings[node.data.pos].lat_interval}}"/>                    
+                    </td>											  
+                    <td>
+						<h5>Longitude Interval</h5>
+						<input type="text"
+							   style="width: 80px;" 
+							   class="form-control input-sm"
+							   ng-model="cullspaceSettings[node.data.pos].long_interval" 
+							   value="{{cullspaceSettings[node.data.pos].long_interval}}"/>	                    
+                    </td>
+                    <td></td>
+                    <td></td>
+				  </tr>
+				</table>
+			  </form>
+			</div>
+			<!-- 
+			  cullspace schema tab 
+			-->
+			<div class="tab-pane" id="schema-tab">
+                <div ng-if="node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">								
+					<span class="btn btn-primary" style="margin-bottom:10px;">Schema {{ node.data.schema.sensor_type }}</span>
+                    <ul class="list-inline" stye="border: 1px solid #ccc; margin-left: 0px; height: 33px;">						
+						<li bindonce ng-repeat="property in node.data.schema.m2m_data_schema" style="list-style-type: none;">																	
+                            <span bindonce ng-if="property.selected==true && property.id != undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id != undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==true  && property.id == undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id == undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>                                                                   
+						</li>
+					</ul>	
+			    </div>
+			</div>						
+            <!-- 
+              end schema tab 
+            -->	
+			<div class="tab-pane" id="stream-tab">				
+                <div id="chartContainer" style="height: 200px; width: 100%;"></div>
+			</div>  
+					
+		  </div>
+	  </div>
+	</div>
+
+<!--
+--
+-- AGGREGATE
+--
+-->
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'aggregate'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1">           
+              <span class="icon-aggregate_2"></span>		   
+			  Aggregate
+          </a>
+        </li>
+        <li>
+          <a href="#culltime-tab" data-toggle="tab">
+            Culltime
+          </a>
+        </li>
+        <li>
+          <a href="#cullspace-tab" data-toggle="tab">
+            Cullspace
+          </a>
+        </li>                   
+        <li ng-if="node.data.schemas.length > 0">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>        
+        <li>
+          <a href="#stream-tab" data-toggle="tab" ng-click="startChart()">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>   
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+      </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+			<div class="tab-pane active" id="detail-tab">
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-2">
+								<h5>Object name</span></h5>
+								<input type="text" 
+									   id="name_{{node.data.id}}"
+									   value="{{ node.data.name }}"									   
+									   ng-model="node.data.name"
+									   ng-change="changeNodeName(node)"
+									   class="form-control input-sm tab-node-name" />				    								
+							</div>
+							<div class="col-md-2">
+								<h5>Aggregate Data name</h5>
+								<select class="form-control tab-node-name" 
+								        ng-model="selectedAggregateAttribute[node.data.pos]" 
+								        ng-options="c as c.name for c in node.data.schemas[0].m2m_data_schema track by c.name">
+								  <option value="">Select attribute</option>
+								</select>					
+							</div>														   								 							
+						</div>
+					</div>										
+				<!--</form>-->
+			</div>
+			<!-- CULLTIME -->			
+			<div class="tab-pane" id="culltime-tab">
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-2">						   								 
+								<div class="row tab-row">
+									<h5>Time Interval</h5>
+									<input type="text"
+									       id="timeinterval_{{node.data.id}}"
+									       style="width: 80px;" 
+									       class="form-control input-sm"
+									       ng-model="aggregateSettings[node.data.pos].time_interval"
+									       ng-change="validateNumber(aggregateSettings[node.data.pos].time_interval, 1, false, node.data.id, 'timeinterval')"
+									       value="{{aggregateSettings[node.data.pos].time_interval}}"
+							               required />										       
+							    </div>									   
+							</div>
+							<div class="col-md-2">
+								<div class="row tab-row">
+									<h5>Time Data Name</h5>
+									<input type="text" 
+									       class="form-control input-sm"
+									       ng-model="aggregateSettings[node.data.pos].time_data_name" 
+									       value="{{aggregateSettings[node.data.pos].time_data_name}}"/>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="row tab-row">								
+									<h5>Time Unit</h5>
+									<select class="form-control tab-node-name"
+										ng-model="aggregateSettings[node.data.pos].time_unit"
+										ng-options="t as t.name for t in timeUnit track by t.name">
+										<option value="">Select time unit</option>
+									</select>																	
+								</div>															
+							</div>																				
+						</div>
+						<div class="row tab-row" style="margin-left: 20px;">
+							<div class="col-md-2">
+								<h5>Start Time</h5>
+								<input type="text" 
+									   name="start_date"
+									   class="start_date_{{node.data.id}}"
+									   style="width: 100px"
+									   datepicker 
+									   ng-model="aggregateSettings[node.data.pos].start_time" />														
+							</div>	
+							<div class="col-md-2">
+								<h5>End Time</h5>
+								<input type="text" 
+									   name="end_date"
+									   class="end_date_{{node.data.id}}"
+									   style="width: 100px"
+									   datepicker 
+									   ng-model="aggregateSettings[node.data.pos].end_time" />							
+							</div>						
+						</div>
+					</div>                
+			</div> 		
+			<!-- END CULLTIME -->
+			<!-- CULLSPACE -->
+			<div class="tab-pane" id="cullspace-tab">
+				<div class="row">
+				  <div class="row tab-row top-buffer">
+					<div class="col-md-2">
+						<div class="row tab-row">
+							<h5>lat data name</h5>
+							<input type="text" 
+								   class="form-control input-sm"
+								   ng-model="aggregateSettings[node.data.pos].lat_data_name" 
+								   value="{{aggregateSettings[node.data.pos].lat_data_name}}"/>							
+						</div>	
+						<div class="row tab-row">
+							<h5>long data name</h5>
+							<input type="text" 
+								   class="form-control input-sm"
+								   ng-model="aggregateSettings[node.data.pos].long_data_name" 
+								   value="{{aggregateSettings[node.data.pos].long_data_name}}"/>						
+						</div>									
+					</div>				
+					<div class="col-md-1">
+						<div class="row tab-row">
+							<h5>North</h5>
+							<input type="text" 
+								   class="form-control input-sm"
+								   id="north_{{node.data.id}}"
+								   ng-model="aggregateSettings[node.data.pos].north" 
+								   value="{{aggregateSettings[node.data.pos].north}}"
+								   ng-change="validateNumber(aggregateSettings[node.data.pos].north, -90, 90, node.data.id, 'north')"
+								   />
+							<h5>South</h5>
+							<input type="text" 
+								   class="form-control input-sm"
+								   id="south_{{node.data.id}}"
+								   ng-model="aggregateSettings[node.data.pos].south" 
+								   ng-change="validateNumber(aggregateSettings[node.data.pos].south, -90, 90, node.data.id, 'south')"
+								   value="{{aggregateSettings[node.data.pos].south}}"/>																
+						</div>																			
+					</div>
+					<div class="col-md-1">									
+						<div class="row tab-row">
+							<h5>East</h5>
+							<input type="text" 
+								   class="form-control input-sm"
+								   id="east_{{node.data.id}}"
+								   ng-model="aggregateSettings[node.data.pos].east" 
+								   ng-change="validateNumber(aggregateSettings[node.data.pos].east, -180, 180, node.data.id, 'east')"
+								   value="{{aggregateSettings[node.data.pos].east}}"/>
+							<h5>West</h5>
+							<input type="text"
+								   class="form-control input-sm"
+								   id="west_{{node.data.id}}"
+								   ng-model="aggregateSettings[node.data.pos].west" 
+								   ng-change="validateNumber(aggregateSettings[node.data.pos].west, -180, 180, node.data.id, 'west')"
+								   value="{{aggregateSettings[node.data.pos].west}}"/>																
+						</div>											
+					</div>
+					<div class="col-md-2">									
+						<div class="row tab-row">
+							<h5>Latitude Interval</h5>
+							<input type="text" 
+								   style="width: 80px;"
+								   class="form-control input-sm"
+								   ng-model="aggregateSettings[node.data.pos].lat_interval" 
+								   value="{{aggregateSettings[node.data.pos].lat_interval}}"/>
+							<h5>Longitude Interval</h5>
+							<input type="text"
+								   style="width: 80px;" 
+								   class="form-control input-sm"
+								   ng-model="aggregateSettings[node.data.pos].long_interval" 
+								   value="{{aggregateSettings[node.data.pos].long_interval}}"/>																
+						</div>											
+					</div>
+				  </div>					
+				</div>
+			</div>
+			<!-- END CULLSPACE -->				
+			<!-- 
+			  aggregate schema tab 
+			-->						
+			<div class="tab-pane tab-content scroll2 max-height-220-overflow" id="schema-tab">						
+                <div ng-if="node.data.hasOwnProperty('schemas')" class="row tab-row top-buffer">
+					<ul stye="border: 1px solid #ccc; margin-left: -30px; height: 33px;">
+						<li ng-repeat="(key, value) in node.data.schemas | countBy: 'sensor_type'" style="list-style-type: none;">
+							<span class="btn btn-primary"
+							      style="margin-bottom: 10px;">
+							    Schema {{ key }} <span class="badge">{{ value }}</span>
+							</span>
+							<ul  ng-repeat="schema in getSchemasArrayByType(key, node.data.schemas)"
+							     class="list-inline">					
+								<li bindonce ng-repeat="property in schema.m2m_data_schema" style="list-style-type: none;">																	
+									<span bindonce ng-if="property.selected==true && property.id != undefined"
+										  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+									<span bindonce ng-if="property.selected==false && property.id != undefined"
+										  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+									<span bindonce ng-if="property.selected==true  && property.id == undefined"
+										  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>
+									<span bindonce ng-if="property.selected==false && property.id == undefined"
+										  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>										  
+								</li>								
+							</ul>						
+						</li>
+					</ul>
+                </div>
+			</div>			
+            <!-- 
+              end schema tab 
+            -->	
+
+			<div class="tab-pane" id="stream-tab">
+                <div id="chartContainer" style="height: 200px; width: 100%;"></div>
+			</div>  
+					
+		  </div>
+	  </div>
+	</div>
+
+<!--
+--
+-- SAX
+--
+-->
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'sax'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1">                         	   
+		  SAX
+          </a>
+        </li>                 
+         <li ng-show="canShowSchemaTab(node)">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>        
+        <li>
+          <a href="#stream-tab" data-toggle="tab" ng-click="startChart()">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>   
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+      </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+			<div class="tab-pane active" id="detail-tab">
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-2">
+								<h5>Object name</span></h5>
+								<input type="text" 
+									   id="name_{{node.data.id}}"
+									   value="{{ node.data.name }}"									   
+									   ng-model="node.data.name"
+									   ng-change="changeNodeName(node)"
+									   class="form-control input-sm tab-node-name" />				    								
+							</div>
+							<div class="col-md-2">
+								<h5>Alphabet</span></h5>
+								<input type="text" 
+									   id="alphabet_{{node.data.id}}"
+									   value="{{ node.data.alphabet }}"										   								  
+									   ng-model="node.data.alphabet"
+									   ng-change="changeSAXElement(node.data.alphabet, 1, false, node.data.id, 'alphabet')"
+									   class="form-control input-sm" />
+							</div>														   								 						
+							<div class="col-md-2">
+								<h5>Window</span></h5>
+								<input type="text" 
+									   id="window_{{node.data.id}}"
+									   value="{{ node.data.window }}"									   
+									   ng-model="node.data.window"
+									   ng-change="changeSAXElement(node.data.window, 1, false, node.data.id, 'window')"
+									   class="form-control input-sm tab-node-name" />				    								
+							</div>														   								 						
+						</div>
+					</div>
+					<div class="row tab-row top-buffer">					
+					
+					</div>
+			</div>							
+			<div class="tab-pane" id="schema-tab">
+                <div ng-if="node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">								
+					<span class="btn btn-primary" style="margin-bottom:10px;">Schema {{ node.data.schema.sensor_type }}</span>
+                    <ul class="list-inline" stye="border: 1px solid #ccc; margin-left: 0px; height: 33px;">						
+						<li bindonce ng-repeat="property in node.data.schema.m2m_data_schema" style="list-style-type: none;">																	
+                            <span bindonce ng-if="property.selected==true && property.id != undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id != undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==true  && property.id == undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id == undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>                                                                   
+						</li>						
+					</ul>	
+			    </div>
+			</div>		
+            <!-- 
+              end schema tab 
+            -->	
+			<div class="tab-pane" id="stream-tab">
+                <div id="chartContainer" style="height: 200px; width: 100%;"></div>
+			</div>  
+					
+		  </div>
+	  </div>
+	</div>
+	
+<!--
+--
+-- JOIN
+--
+-->
+<style>
+	body {
+		height: 100%;
+		width: 100%;
+	}
+	
+	.join-table {
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
+
+	.draggable {
+		/*padding:12px;*/
+		position: absolute;
+		border: 1px solid #f5f5f5;
+	}
+
+	.draggable .title {
+		font-weight: bold;
+		text-align: center;
+		border-bottom: 1px solid #f5f5f5;
+	}
+
+	.draggable .title:hover {
+		cursor: move;
+	}
+</style>
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'join'">
+	  <div class="navbar-inner">		  
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1" ng-click="drawLines()">                         	   
+		  Join
+          </a>
+        </li>                 
+        <li ng-show="canShowSchemaTab(node)" ng-click="setJoinProperties(node.data.join_schema)">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>        
+        <li>
+          <a href="#stream-tab" data-toggle="tab" ng-click="startChart()">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>   
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+      </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">			  
+			<div class="tab-pane active" id="detail-tab">	
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-2">
+								<h5>Object name</span></h5>
+								<input type="text" 
+									   id="name_{{node.data.id}}"
+									   value="{{ node.data.name }}"									   
+									   ng-model="node.data.name"
+									   ng-change="changeNodeName(node)"
+									   class="form-control input-sm tab-node-name" />				    								
+							</div>
+							<div class="col-md-2">
+									<button type="button" 
+											class="btn btn-custom btn-sm" 											
+											ng-click="resetJoinLines()"											
+											title="Reset join lines"
+											data-toggle="tooltip" data-placement="bottom" tooltip>
+											Reset
+									</button>
+									<button type="button" 
+											class="btn btn-custom btn-sm" 											
+											ng-click="doNaturalJoin()"											
+											title="Natural join"
+											data-toggle="tooltip" data-placement="bottom" tooltip>											
+											Natural
+									</button>										
+							</div>																				   								 						
+						</div>
+					</div>
+					<div class="row tab-row top-buffer">																			
+					   <table class="table table-bordered join-table scrollTable" id="join-table{{::node.data.pos}}" ng-if="::node.data.connected_nodes != []">						   
+						   <thead>
+							  <tr>
+								 <th bindonce ng-repeat="elem in node.data.connected_schemas track by $index" bo-text="elem.name">
+									 <!-- uso track by perchè posso avere nell'array stringhe uguali ripetute -->
+									 <!--{{ ::name }}-->
+								 </th>
+							  </tr>
+						   </thead>
+						   <tbody style="overflow-y: scroll; height: 100px;">
+							  <tr>
+								 <td bindonce ng-repeat="val in node.data.connected_schemas track by $index">
+									 <!-- Se non ho tracciato ancora linee, mostra proprietà senza linee -->
+								     <div bindonce
+								          ng-if="node.data.join_schema.length == 0"
+								          ng-repeat="val_interno in ::val.schema.m2m_data_schema track by $index" 
+								          style="max-width: 150px; height: 30px;">								          
+								         <span ng-if="::val_interno.selected==false" class="glyphicon glyphicon-ban-circle"></span>
+										 <span ng-attr-id="{{::val.id}}_{{::$index}}" 
+								               ng-click="::enableDrawing(val.id, $index, val_interno.selected)"> 
+                                             {{ ::val_interno.name }}										 						
+                                             ({{::val_interno.type}})                                                                                                                        
+                                         </span>
+								     </div>
+									 <!-- Se ho tracciato ancora linee, mostra proprietà con linee -->
+								     <div bindonce
+								          ng-if="node.data.join_schema.length > 0"
+								          ng-repeat="val_interno in ::val.schema.m2m_data_schema track by $index" 
+								          style="max-width: 150px; height: 30px;">								          
+
+										 <span ng-if="::val_interno.selected==false" class="glyphicon glyphicon-ban-circle"></span>								          
+										 <span bindonce
+										       ng-attr-id="{{::val.id}}_{{::$index}}" 										       
+								               ng-click="::enableDrawing(val.id, $index,  true)"
+								         > 
+                                             {{ ::val_interno.name }}										 						
+                                             ({{::val_interno.type}})
+                                         </span>                                       
+								     </div>									     			     
+                                 </td>
+							  </tr>
+						   </tbody>
+						</table>					
+					</div>															
+			</div>	
+            <!-- 
+              schema tab 
+            -->										
+			<div class="tab-pane tab-content" id="schema-tab">								
+                <div bindonce ng-if="node.data.hasOwnProperty('join_schema')" class="row tab-row top-buffer" style="width: 650px;">
+					<div bindonce 
+					     ng-repeat="value in allJoinProperties[node.data.pos] track by $index" 					    
+					     style="margin-left: 30px;">					     					    
+								<input 
+								    type="checkbox" 								    
+								    ng-model="schemaPropertiesSelected[node.idx][$index]"
+								    ng-disabled="allJoinProperties[node.data.pos][$index].enabled == false"
+								    ng-click="propagateJoinProperty(node.data.id, node.idx, value.value, $index)"> 
+								<span ng-bind-html="renderHTML(value.value)"></span>																													    
+								    <!--ng-model="schemaPropertiesSelected[node.idx][$index]"
+								    ng-change="propagateSourceProperty(node.data.id, node.idx, $index)">-->							
+					</div>										
+					<!--	<div bindonce ng-repeat="(key, value) in node.data.join_schema" style="margin-left: 30px;">
+							<b class="blue-color">{{ value.property }}</b>
+
+						</div>-->
+						<!-- Adesso faccio vedere le proprietà degli schemi
+						     non coinvolte nel join -->						     
+						<!--<div bindonce ng-repeat="value in allJoinProperties[node.data.pos] track by $index">						    
+						    <div bindonce ng-repeat="(k, v) in value track by $index">								
+								<div ng-repeat="y in v" style="margin-left: 30px;">
+								  <span ng-if="isJoinProperty(k, y)==false">
+									<b class="red-color">{{k}}</b>.{{y}}
+								  </span>
+							    </div>
+							</div>
+						</div>-->
+                </div>
+			</div>			
+            <!-- 
+              end schema tab 
+            -->	
+			<div class="tab-pane" id="stream-tab">
+                <div id="chartContainer" style="height: 200px; width: 100%;"></div>
+			</div>  
+					
+		  </div>
+	  </div>
+	</div>
+	
+<!--
+--
+-- CSV JOIN
+--
+-->
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'csv_join'">
+		{{::enableFileUploader() }}
+	  <div class="navbar-inner">		  
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <!--<a href="#detail-tab" data-toggle="tab" data-step="1" ng-click="drawLines()">-->                         	   
+          <a href="#detail-tab" data-toggle="tab" data-step="1">                         	   
+		  Join
+          </a>
+        </li>                 
+        <li ng-show="canShowSchemaTab(node)" ng-click="setJoinPropertiesCSV(node.data)">
+        <!--<li ng-show="canShowSchemaTab(node)">-->
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>
+        <li>
+          <a href="#csv-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-stats"></span>
+            CSV
+          </a>
+        </li>               
+        <li>
+          <a href="#stream-tab" data-toggle="tab" ng-click="startChart()">
+            <span class="glyphicon glyphicon-random"></span>
+            Stream
+          </a>
+        </li>   
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+      </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">			  
+			<div class="tab-pane active" id="detail-tab">						
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-2">
+								<h5>Object name</span></h5>
+								<input type="text" 
+									   id="name_{{node.data.id}}"
+									   value="{{ node.data.name }}"									   
+									   ng-model="node.data.name"
+									   ng-change="changeNodeName(node)"
+									   class="form-control input-sm tab-node-name" />				    								
+							</div>
+							<div class="col-md-2">
+									<button type="button" 
+											class="btn btn-custom btn-sm" 											
+											ng-click="resetJoinLinesCSV()"											
+											title="Reset join lines"
+											data-toggle="tooltip" data-placement="bottom" tooltip>
+											<!--<span class="glyphicon glyphicon-trash"></span>-->
+											Reset
+									</button>
+									<button type="button" 
+											class="btn btn-custom btn-sm" 											
+											ng-click="doNaturalJoin()"											
+											title="Natural join"
+											data-toggle="tooltip" data-placement="bottom" tooltip>											
+											Natural
+									</button>	
+							</div>
+							<!--<div class="col-md-2">
+								<span class="btn btn-default btn-file" ng-if="canUpload()==true">
+									Browse <input type="file" 
+								                  nv-file-select uploader="uploader" 
+								           />	
+								</span>								       							       											
+							</div>-->																											   								 						
+						</div>
+						<div class="row tab-row top-buffer" ng-if="canUpload()==false" style="margin-left: 25px;">												
+						    Please connect a Source to the Join operator.
+						</div>							
+					</div>				
+					
+					<div class="row tab-row top-buffer">
+						<!--{{node.data.connected_schemas}}-->
+					   <table class="table table-bordered join-table scrollTable" id="join-table{{::node.data.pos}}" ng-if="::node.data.connected_nodes != []">						   
+						   <thead>
+							  <tr>
+								 <th bindonce ng-repeat="elem in node.data.connected_schemas track by $index" bo-text="elem.name">
+								 </th>
+							  </tr>
+						   </thead>
+						   <tbody style="overflow-y: scroll; height: 100px;">
+							  <tr>
+								 <td bindonce ng-repeat="val in node.data.connected_schemas track by $index">
+									 <!-- Se non ho tracciato ancora linee, mostra proprietà senza linee -->
+								     <div bindonce
+								          ng-if="node.data.join_schema.length == 0"
+								          ng-repeat="val_interno in ::val.schema.m2m_data_schema track by $index" 
+								          style="max-width: 150px; height: 30px;">								          
+								         <span ng-if="::val_interno.selected==false" class="glyphicon glyphicon-ban-circle"></span>
+										 <span ng-attr-id="{{val.id}}_{{$index}}" 
+								               ng-click="::enableDrawingCSV(val.id, $index, val_interno.selected)"> 
+                                             {{ ::val_interno.name }}										 						
+                                             ({{::val_interno.type}})                                                                                                                        
+                                         </span>
+								     </div>
+									 <!-- Se ho tracciato ancora linee, mostra proprietà con linee -->
+								     <div bindonce
+								          ng-if="node.data.join_schema.length > 0"
+								          ng-repeat="val_interno in ::val.schema.m2m_data_schema track by $index" 
+								          style="max-width: 150px; height: 30px;">				
+										 <span ng-if="::val_interno.selected==false" class="glyphicon glyphicon-ban-circle"></span>								          
+										 <span bindonce
+										       ng-attr-id="{{val.id}}_{{$index}}" 										       
+								               ng-click="::enableDrawingCSV(val.id, $index,  true)"
+								         > 
+                                             {{ ::val_interno.name }}										 						
+                                             ({{::val_interno.type}})
+                                         </span>                                       
+								     </div>									     			     
+                                 </td>
+							  </tr>
+						   </tbody>
+						</table>					
+					</div>															
+			</div>	
+            <!-- 
+              schema tab 
+            -->										
+			<div class="tab-pane tab-content" id="schema-tab">								
+                <div bindonce ng-if="node.data.hasOwnProperty('join_schema')" class="row tab-row top-buffer" style="width: 650px;">
+					<div bindonce 
+					     ng-repeat="value in allJoinProperties[node.data.pos] track by $index" 					    
+					     style="margin-left: 30px;">					     					    
+								<input 
+								    type="checkbox" 								    
+								    ng-model="schemaPropertiesSelected[node.idx][$index]"
+								    ng-disabled="allJoinProperties[node.data.pos][$index].enabled == false"
+								    ng-click="propagateJoinProperty(node.data.id, node.idx, value.value, $index)"> 
+								<span ng-bind-html="renderHTML(value.value)"></span>						
+					</div>						
+                </div>
+			</div>			
+            <!-- 
+              end schema tab 
+            -->
+            <!--
+              CSV tab
+            -->
+            <div class='tab-pane {{ node.data.id }}' id="csv-tab">
+				<!--<div ng-if="node.data.schema.hasOwnProperty('sample')">					
+					Da sistemare
+				</div>-->
+					<div class="row">
+						<div class="row tab-row top-buffer" style="margin-bottom:20px;">				
+							<div class="col-md-2">
+								<h5>Choose a file</h5>
+								<span class="btn btn-default btn-file" ng-if="canUpload()==true">
+									Browse <input type="file" 
+								                  nv-file-select uploader="uploader" 
+								           />	
+								</span>								       							       											
+							</div>
+							<div class="col-md-2">
+								<h5>Delimiter</h5>								
+								<select class="form-control tab-node-name"
+									ng-model="csv_delimiter[node.data.pos]"
+									ng-options="t as t.name for t in csv_delimiters track by t.name">
+									<option value="">Select delimiter</option>
+								</select>							       							       											
+							</div>													
+						</div>
+					</div>							
+				<div class="row tab-row top-buffer" ng-if="canUpload()==false" style="margin-left: 25px;">												
+					Please connect a Source to the Join operator and then upload a valid CSV file.
+				</div>	
+					<!--
+					    TABELLA GESTIONE UPLOAD FILE
+					-->					
+                    <table class="table csv_join_table" ng-show="uploader.queue.length>0">
+                        <thead>
+                            <tr>
+                                <th width="50%">Name</th>
+                                <th ng-show="uploader.isHTML5">Size</th>
+                                <th ng-show="uploader.isHTML5">Progress</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in uploader.queue">
+                                <td><strong>{{ item.file.name }}</strong></td>
+                                <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                                <td ng-show="uploader.isHTML5">
+                                    <div class="progress" style="margin-bottom: 0;">
+                                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                                </td>
+                                <td nowrap>
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess || csv_delimiter[node.data.pos] == [] || csv_delimiter[node.data.pos].length == 0 || csv_delimiter[node.data.pos] == undefined">
+                                        <span class="glyphicon glyphicon-upload"></span> Upload
+                                    </button>
+                                    <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                                        <span class="glyphicon glyphicon-trash"></span> Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>                    
+                    <!--
+                        FINE TABELLA
+                    -->				
+				<span ng-bind-html="renderHTML(node.data.html_sample)"></span>
+			</div>	
+			<div class="tab-pane" id="stream-tab">
+                <div id="chartContainer" style="height: 200px; width: 100%;"></div>
+			</div>  
+					
+		  </div>
+	  </div>
+	</div>
+	
+<!--
+--
+-- FINE CSV JOIN
+--
+-->	
+
+<!--
+--
+-- TRIGGER EVENT
+--
+--> 
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'triggerEvent'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#general-tab" data-toggle="tab" data-step="1">           
+		    <!--<span class="glyphicon glyphicon-tint"></span>-->
+		    <span class="glyphicon glyphicon-flash"></span>
+		    General
+          </a>
+        </li>        
+        <li>
+          <a href="#on-tab" data-toggle="tab" data-step="1">           
+		    <!--<span class="glyphicon glyphicon-tint"></span>-->
+		    ON
+          </a>
+        </li>
+        <li>
+          <a href="#off-tab" data-toggle="tab">
+            <!--<span class="glyphicon glyphicon-stats"></span>-->
+            OFF
+          </a>
+        </li>
+        <li ng-show="canShowSchemaTab(node)">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>           
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+		  </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+			<!-- 
+			  Source detail tab 
+			-->
+			<div class="tab-pane active" id="general-tab">
+						<table id="trigger-table">
+						  <tr>
+							<td>
+								<h5>Trigger Name</span></h5>
+								<input type="text" id="name_{{node.data.id}}" value="{{ node.data.name }}"
+								   ng-model="node.data.name" ng-change="changeNodeName(node)"
+								   class="form-control input-sm tab-node-name" />	
+							</td>
+						  </tr>					  
+				 </table>			 				 					
+			</div>
+            <!-- 
+              end detail tab 
+            -->              
+			<!-- 
+			  Source on tab 
+			-->
+			<div class="tab-pane" id="on-tab">
+						<table id="trigger-table">
+						  <tr>
+							<td>
+									<h5>Trigger Interval</h5>
+									<input type="number"
+									       style="width: 80px;" 
+									       class="form-control input-sm"
+									       ng-model="triggerOnSettings[node.data.pos].trigger_interval" 
+									       value="{{triggerOnSettings[node.data.pos].trigger_interval}}"/>		
+							</td>
+							<td>
+								<h5 style="margin: 10px 0px 7px 0px;">Trigger Condition</h5>
+								<!--<form class="form-inline">																								
+											<select class="form-control tab-node-name" 
+											        ng-model="triggerEventConditions[node.data.pos][triggerEventConditions[node.data.pos].indexOf(c)].expression" 
+											        ng-options="o for o in operators">
+											  <option value="">Expression</option>
+											</select>
+											<input type="text" 
+                                                   style="width: 80px"
+												   class="form-control" 
+												   ng-model="triggerEventConditions[node.data.pos][triggerEventConditions[node.data.pos].indexOf(c)].data_value" 
+												   placeholder="value" />
+												   {{ triggerEventConditions }}							
+							    </form>-->							  
+								<form class="form-inline">		
+									        Count&nbsp;																						
+											<!--<select class="form-control tab-node-name" 
+											        ng-model="triggerOnSettings[node.data.pos].trigger_condition.expression" 
+											        ng-options="o for o in operators">
+											  <option value="">Expression</option>-->
+											<select class="form-control tab-node-name" 
+											        ng-model="triggerOnSettings[node.data.pos].trigger_condition.expression" 
+											        ng-options="o.symbol for o in count_operators track by o.symbol">
+											  <option value="">Expression</option>
+											</select>											  
+											</select>											 																					
+											<input type="text" 
+                                                   style="width: 80px"
+												   class="form-control" 
+												   ng-model="triggerOnSettings[node.data.pos].trigger_condition.data_value" 
+												   placeholder="value" />						
+							    </form>							  
+							</td>
+						  </tr>
+					     <tr>
+						  <td></td>  
+						  <td></td>  
+					   </tr>					  
+				 </table>
+				 <!--<h5 ng-if="triggerEventConditions[node.data.pos].length>0" style="padding-left: 5px;">Available Conditions</h5>-->
+				 <!-- Ciclo l'elenco dei filtri del nodo -->	
+				 <div class="row tab-row top-buffer">		
+
+					 <div class="col-sm-8 pull-left well"
+					     style="margin-bottom: -10px; 
+					            z-index: 100; 
+					            border-bottom: 1px solid #f5f5f5;
+					            margin-bottom: -28px;">
+					   <div ng-if="node.data.hasOwnProperty('schema')">									
+				         <div ng-repeat="c in triggerEventOnConditions[node.data.pos]">
+						     <a href="#" class="btn btn-sm btn-danger"
+						        style="float: left;
+                                       margin: 1px 5px 0px 1px;"
+							    ng-click="removeTriggerCondition(node, c, 'on')">
+							    <span class="glyphicon glyphicon-trash"></span>
+						      </a>						 					 						   								    								   
+						     <div class="input-group col-sm-8">								   
+						         <!--<input type="text" placeholder="Attribute" class="form-control" 
+							            ng-model="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].attribute" 
+							            value="{{ c.attribute }}" />-->
+                                 <select class="form-control tab-node-name"
+                                         style="width: 125px;" 
+                                         ng-model="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].attribute"
+                                         ng-class="{'error-condition': triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].attribute == undefined}" 
+                                         ng-options="attr.name for attr in node.data.schema.m2m_data_schema track by attr.name">
+                                         <option value="">Attribute</option>											 
+                                 </select>                                							            
+                                 <!-- SE RANGE O NOT RANGE -->
+                                 <select class="form-control tab-node-name"
+								         ng-if="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								                triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'"
+								         style="width: 105px;"
+                                         ng-class="{'error-condition': triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator == undefined}"
+								         ng-model="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator" 
+								         ng-options="o.symbol for o in operators track by o.symbol">
+								         <option value="">Operator</option>                                 
+								 </select>
+                                 <!-- ALTRIMENTI -->									 								   
+                                 <select class="form-control tab-node-name"
+										 ng-if="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol != 'RANGE' &&
+								                triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol != 'NOT RANGE'"
+								         ng-class="{'error-condition': triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator == undefined}"
+										 style="width: 135px;"  
+                                         ng-model="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator" 
+                                         ng-options="o.symbol for o in operators track by o.symbol"> 
+                                         <option value="">Operator</option>
+                                 </select>
+								 <!-- SE INPUT TYPE == RANGE -->
+								 <input ng-if="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								               triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'" 
+								        type="text" class="form-control" 
+								        ng-class="{'error-condition': triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value1 == undefined
+								                                   || triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value1 == ''}"
+								        ng-model="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value1" 
+								        style="width: 82px;"
+								        placeholder="from value" 
+								        value="{{ c.value1 }}"/>
+								 <input ng-if="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								               triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'" 
+								        ng-class="{'error-condition': triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value2 == undefined
+								                                   || triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value2 == ''}"
+								        type="text" class="form-control"
+								        style="width: 82px;"
+								        ng-model="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value2" 
+								        placeholder="to value" 
+								        value="{{ c.value2 }}"/>								           
+								 <!-- SE INPUT TYPE != RANGE -->				        						 
+								 <input ng-if="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol != 'RANGE' &&
+								               triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].operator.symbol != 'NOT RANGE'"
+								        type="text" class="form-control"
+								        ng-class="{'error-condition': triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value == undefined
+								                                    || triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value == ''}"
+								        style="width: 135px;" 
+								        ng-model="triggerEventOnConditions[node.data.pos][triggerEventOnConditions[node.data.pos].indexOf(c)].value" 
+								        placeholder="value" 
+								        value="{{ c.value }}"/>								           								          
+								        <span style="float: right; margin-top: 7px;" ng-if="$last==false">{{triggerONConditionsLogicOperator[node.data.pos]}}</span>						   
+						     </div>                                              
+					     </div><!-- ng-repeat -->
+					   </div>
+					   <div ng-if="node.data.hasOwnProperty('schema')==false">
+                           To add conditions you must connect TriggerEvent to an object with schema setted up.
+					   </div>					   					 									 
+				 </div>	
+				 </div>		 
+						<div class="row tab-row top-buffer" style="margin-top: 0px !important;">	
+							<div class="col-sm-8 pull-left well" style="margin-bottom: 0px;">
+								<form class="form-inline">
+									<!--<h5>Conditions</h5>-->
+									<button type="button" 
+									        ng-show="showTEONANDbutton[node.data.pos]"
+											class="btn btn-success btn-sm" 
+											style="margin-left: 1px; z-index: 111; position: relative;"
+											ng-click="addTriggerEventOnCondition('AND', node)"
+                                            title="Add trigger ON condition"
+                                            ng-disabled="isButtonDisabled(node)==true"
+                                            data-toggle="tooltip" data-placement="bottom" tooltip>
+											<span class="glyphicon glyphicon-plus"> AND</span>
+									</button>
+									<button type="button"
+									        ng-show="showTEONORbutton[node.data.pos]" 
+											class="btn btn-success btn-sm" 
+											style="margin-left: 5px; z-index: 100; position: relative;"
+											ng-click="addTriggerEventOnCondition('OR', node)"
+											ng-disabled="isButtonDisabled(node)==true"
+                                            title="Add trigger ON condition"
+                                            data-toggle="tooltip" data-placement="bottom" tooltip>
+											<span class="glyphicon glyphicon-plus"> OR</span>
+									</button>																			
+									<!--<div class="input-group col-sm-8" ng-show="showTriggerEventOnForm">										
+										<input type="text" placeholder="Attribute" class="form-control" ng-model="triggerEvent.attribute" />
+										<div class="input-group-btn">																					   								 													
+											<select class="form-control tab-node-name" 
+													ng-model="triggerEvent.operator" 
+													ng-options="o.symbol for o in operators">
+											  <option value="">Operator</option>
+											</select>									
+										</div>
+										<input type="text" class="form-control" ng-model="triggerEvent.value" placeholder="value" />	
+									</div>-->						
+							  </form>							  
+							</div>							
+						</div>					 			
+			</div>
+            <!-- 
+              end on tab 
+            -->  
+			<!-- 
+			  off tab
+			-->
+			<div class="tab-pane" id="off-tab">
+						<table id="trigger-table">
+						  <tr>
+							<td>
+									<h5>Trigger Interval</h5>
+									<input type="number"
+									       style="width: 80px;" 
+									       class="form-control input-sm"
+									       ng-model="triggerOffSettings[node.data.pos].trigger_interval" 
+									       value="{{triggerOffSettings[node.data.pos].trigger_interval}}"/>		
+							</td>
+							<td>
+								<h5 style="margin: 10px 0px 7px 0px;">Trigger Condition</h5>							  
+								<form class="form-inline">	
+									        Count&nbsp;																								
+											<!--<select class="form-control tab-node-name" 
+											        ng-model="triggerOffSettings[node.data.pos].trigger_condition.expression" 
+											        ng-options="o for o in operators">
+											  <option value="">Expression</option>
+											</select>-->
+											<select class="form-control tab-node-name" 
+											        ng-model="triggerOffSettings[node.data.pos].trigger_condition.expression" 
+											        ng-options="o.symbol for o in count_operators track by o.symbol">
+											  <option value="">Expression</option>										  
+											</select>											
+											<input type="text" 
+                                                   style="width: 80px"
+												   class="form-control" 
+												   ng-model="triggerOffSettings[node.data.pos].trigger_condition.data_value" 
+												   placeholder="value" />						
+							    </form>							  
+							</td>
+						  </tr>
+				</table>
+				<div class="row tab-row top-buffer">	
+				 <!--<h5 ng-if="triggerEventConditions[node.data.pos].length>0" style="padding-left: 5px;">Available Conditions</h5>-->				 								
+
+					 <div class="col-sm-8 pull-left well" 
+					     style="margin-bottom: -10px; 
+					            z-index: 100; 
+					            border-bottom: 1px solid #f5f5f5;
+					            margin-bottom: -28px;">
+					   <div ng-if="node.data.hasOwnProperty('schema')">			
+				         <div ng-repeat="c in triggerEventOffConditions[node.data.pos]">
+						     <a href="#" class="btn btn-sm btn-danger"
+						        style="float: left;
+                                       margin: 1px 5px 0px 1px;"
+							    ng-click="removeTriggerCondition(node, c, 'off')">
+							    <span class="glyphicon glyphicon-trash"></span>
+						      </a>						 					 						   								    								   
+						     <div class="input-group col-sm-8">			
+                                 <select class="form-control tab-node-name"
+                                         style="width: 125px;" 
+                                         ng-model="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].attribute"
+                                         ng-class="{'error-condition': triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].attribute == undefined}" 
+                                         ng-options="attr.name for attr in node.data.schema.m2m_data_schema track by attr.name">
+                                         <option value="">Attribute</option>											 
+                                 </select>							            
+                                 <!-- SE RANGE O NOT RANGE -->
+                                 <select class="form-control tab-node-name"
+								         ng-if="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								                triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'"
+								         style="width: 105px;"
+								         ng-class="{'error-condition': triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator == undefined}" 
+								         ng-model="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator" 
+								         ng-options="o.symbol for o in operators track by o.symbol">
+								         <option value="">Operator</option>                                 
+								 </select>
+                                 <!-- ALTRIMENTI -->									 								   
+                                 <select class="form-control tab-node-name"
+										 ng-if="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol != 'RANGE' &&
+								                triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol != 'NOT RANGE'"
+										 style="width: 135px;"
+										 ng-class="{'error-condition': triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator == undefined}"
+                                         ng-model="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator" 
+                                         ng-options="o.symbol for o in operators track by o.symbol"> 
+                                         <option value="">Operator</option>
+                                 </select>
+								 <!-- SE INPUT TYPE == RANGE -->
+								 <input ng-if="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								               triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'" 
+								        type="text" class="form-control"
+								        ng-class="{'error-condition': triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value1 == undefined
+								                                   || triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value1 == ''}" 
+								        ng-model="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value1" 
+								        style="width: 82px;"
+								        placeholder="from value" 
+								        value="{{ c.value1 }}"/>
+								 <input ng-if="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol == 'RANGE' ||
+								               triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol == 'NOT RANGE'" 
+								        type="text" class="form-control"
+								        ng-class="{'error-condition': triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value2 == undefined
+								                                   || triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value2 == ''}"
+								        style="width: 82px;"
+								        ng-model="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value2" 
+								        placeholder="to value" 
+								        value="{{ c.value2 }}"/>								           
+								 <!-- SE INPUT TYPE != RANGE -->				        						 
+								 <input ng-if="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol != 'RANGE' &&
+								               triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].operator.symbol != 'NOT RANGE'"
+								        type="text" class="form-control"
+								        ng-class="{'error-condition': triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value == undefined
+								                                    || triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value == ''}"
+								        style="width: 135px;" 
+								        ng-model="triggerEventOffConditions[node.data.pos][triggerEventOffConditions[node.data.pos].indexOf(c)].value" 
+								        placeholder="value" 
+								        value="{{ c.value }}"/>								           								          
+								        <span style="float: right; margin-top: 7px;" ng-if="$last==false">{{triggerOFFConditionsLogicOperator[node.data.pos]}}</span>								        				  
+						     </div>                                              
+					     </div><!-- ng-repeat -->
+					   </div>
+					   <div ng-if="node.data.hasOwnProperty('schema')==false">
+                           To add conditions you must connect TriggerEvent to an object with schema setted up.
+					   </div>					   				         
+				 </div>						
+			    </div>
+						<div class="row tab-row top-buffer" style="margin-top: 0px !important;">	
+							<div class="col-sm-8 pull-left well" style="margin-bottom: 0px;">
+								<form class="form-inline">
+									<button type="button" 
+									        ng-show="showTEOFFANDbutton[node.data.pos]"
+											class="btn btn-success btn-sm" 
+											style="margin-left: 1px; z-index: 111; position: relative;"
+											ng-click="addTriggerEventOffCondition('AND', node)"
+                                            title="Add trigger OFF condition"
+                                            ng-disabled="isButtonDisabled(node)==true"
+                                            data-toggle="tooltip" data-placement="bottom" tooltip>
+											<span class="glyphicon glyphicon-plus"> AND</span>
+									</button>
+									<button type="button"
+									        ng-show="showTEOFFORbutton[node.data.pos]" 
+											class="btn btn-success btn-sm" 
+											style="margin-left: 5px; z-index: 100; position: relative;"
+											ng-click="addTriggerEventOffCondition('OR', node)"
+											ng-disabled="isButtonDisabled(node)==true"
+                                            title="Add trigger OFF condition"
+                                            data-toggle="tooltip" data-placement="bottom" tooltip>
+											<span class="glyphicon glyphicon-plus"> OR</span>
+									</button>																																														
+							  </form>							  
+							</div>							
+						</div>				 				 	 				 					
+			</div> 
+			<!--
+			  end off tab
+			-->
+			<!-- 
+			  trigger event schema tab 
+			-->
+			<div class="tab-pane" id="schema-tab">
+                <div ng-if="node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">								
+					<span class="btn btn-primary" style="margin-bottom:10px;">Schema {{ node.data.schema.sensor_type }}</span>
+                    <ul class="list-inline" stye="border: 1px solid #ccc; margin-left: 0px; height: 33px;">						
+						<li bindonce ng-repeat="property in node.data.schema.m2m_data_schema" style="list-style-type: none;">																	
+                            <span bindonce ng-if="property.selected==true && property.id != undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id != undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{property.node_name}}.{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==true  && property.id == undefined"
+                                  class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>
+                            <span bindonce ng-if="property.selected==false && property.id == undefined"
+                                  class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property.name }} </span>                                  
+						</li>						
+					</ul>	
+			    </div>
+			</div>						
+            <!-- 
+              end schema tab 
+            -->				  						
+		</div>
+	  </div>
+	</div>	
+
+
+<!--
+--
+-- TRIGGER ACTION ON
+--
+--> 
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'triggerAction' && node.data.event_state==='on'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#on-tab" data-toggle="tab" data-step="1">           
+		    Details
+          </a>
+        </li>
+        <li ng-if="node.data.schemas.length > 0">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>                 
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+		  </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+
+			<!-- 
+			  trigger on detail tab 
+			-->
+			<div class="tab-pane active" id="on-tab">
+						<table id="trigger-table">
+						  <tr>
+							<td>
+								<h5>Action ON</span></h5>	
+							</td>	
+						  </tr>		  
+				 </table>				 							 					
+			</div>
+            <!-- 
+              end on tab 
+            -->
+			<!-- 
+			  trigger on schema tab 
+			-->
+			<div class="tab-pane tab-content scroll2 max-height-220-overflow" id="schema-tab">						
+                <div ng-if="node.data.hasOwnProperty('schemas')" class="row tab-row top-buffer">
+					<ul stye="border: 1px solid #ccc; margin-left: -30px; height: 33px;">
+						<li ng-repeat="(key, value) in node.data.schemas | countBy: 'sensor_type'" style="list-style-type: none;">
+							<span class="btn btn-primary"
+							      style="margin-bottom: 10px;">
+							    Schema {{ key }} <span class="badge">{{ value }}</span>
+							</span>							
+							<ul  ng-repeat="schema in getSchemasArrayByType(key, node.data.schemas)"
+							     class="list-inline">									     
+								<li ng-repeat="property_y in sortSchemaObj(schema.m2m_data_schema)">									
+									<span ng-if="isSourcePropertyDisabledByID(schema.source_id, property_y)==true"
+											class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property_y.name }} </span>
+									<span ng-if="isSourcePropertyDisabledByID(schema.source_id, property_y)==false"
+											class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property_y.name }} </span>									    
+								</li>
+							</ul>						
+						</li>
+					</ul>
+                </div>
+			</div>										
+            <!-- 
+              end schema tab 
+            -->	                          				
+		</div>
+	  </div>
+	</div>	
+	
+<!--
+--
+-- TRIGGER ACTION OFF
+--
+--> 
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'triggerAction' && node.data.event_state==='off'">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#off-tab" data-toggle="tab" data-step="1"> 
+		    Details
+          </a>
+        </li>
+        <li ng-if="node.data.schemas.length > 0">
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>                          
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+		  </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+			<div class="tab-pane active" id="off-tab">
+						<table id="trigger-table">
+						  <tr>
+							<td>
+								<h5>Action OFF</span></h5>
+							</td>	
+						  </tr>		  
+				 </table>				 							 					
+			</div>
+			<!-- 
+			  trigger on schema tab 
+			-->
+			<div class="tab-pane tab-content scroll2 max-height-220-overflow" id="schema-tab">						
+                <div ng-if="node.data.hasOwnProperty('schemas')" class="row tab-row top-buffer">
+					<ul stye="border: 1px solid #ccc; margin-left: -30px; height: 33px;">
+						<li ng-repeat="(key, value) in node.data.schemas | countBy: 'sensor_type'" style="list-style-type: none;">
+							<span class="btn btn-primary"
+							      style="margin-bottom: 10px;">
+							    Schema {{ key }} <span class="badge">{{ value }}</span>
+							</span>
+							<ul  ng-repeat="schema in getSchemasArrayByType(key, node.data.schemas)"
+							     class="list-inline">					
+								<li ng-repeat="property_y in sortSchemaObj(schema.m2m_data_schema)">
+									<span ng-if="isSourcePropertyDisabledByID(schema.source_id, property_y)==true"
+											class="badge" style="background-color: #199819; padding: 5px; margin-bottom: 10px;">{{ property_y.name }} </span>
+									<span ng-if="isSourcePropertyDisabledByID(schema.source_id, property_y)==false"
+											class="badge" style="background-color: #d43f3a; padding: 5px; margin-bottom: 10px;">{{ property_y.name }} </span>									    
+								</li>
+							</ul>						
+						</li>
+					</ul>
+                </div>
+			</div>						
+            <!-- 
+              end schema tab 
+            -->							
+		</div>
+	  </div>
+	</div>	
+	
+<!--
+--
+-- TRANSFORM
+--
+-->
+	<!-- Dettagli Operatori etc -->
+	<div class="navbar workflow-tab" ng-show="showTab" ng-if="node.data.object === 'transform'">		
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#transform-tab" data-toggle="tab" data-step="1">           
+              <span class="glyphicon glyphicon-wrench"></span>		   
+			  Transform
+          </a>
+        </li>
+        <li>
+          <a href="#virtual-tab" data-toggle="tab">
+            Virtual fields
+          </a>
+        </li>
+        <li>
+          <a href="#schema-tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Schema
+          </a>
+        </li>        
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteNode(node)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+      </ul>
+      <!--
+        INIZIO TRANSFORM
+      -->
+		  <div id="tab-content" class="tab-content scroll2 max-height-220-overflow">
+			<div class="tab-pane active" id="transform-tab">
+					<div class="row tab-row" style="margin-top: 10px;">
+					    <button class="btn btn-sm btn-success" ng-click="applyTransform(node.data.pos)">Apply</button>
+					</div>
+					<div class="row" style="margin-top:5px;">						
+						<div bindonce ng-repeat="property in node.data.schema.m2m_data_schema track by $index"
+						     class="row tab-row">
+						     <div class="col-md-2">
+								 {{property.name}}
+							 </div>
+							<div class="col-md-2">
+								<div class="row tab-row">								
+									<!--<h5>Function</h5>-->
+									<select class="form-control tab-node-name"
+										ng-model="transformFunctionsSettings[node.data.pos][$index]"
+										ng-options="f as f.operation_name for f in transform_functions | FunctionIsCompatible:node.data.schema.m2m_data_schema[$index] track by f.operation_name">
+										<option value="">Select function</option>
+									</select>																	
+								</div>															
+							</div>							 
+							 <div class="col-md-3">
+								AS <input type="text" value="{{::property.name}}" ng-model="propertyNamesAS[node.data.pos][$index]" />
+							 </div>
+						</div>
+					</div>
+			</div>
+			<!-- END TRANSFORM -->
+			<!-- VIRTUAL -->			
+			<div class="tab-pane" id="virtual-tab">				
+					<div class="row tab-row" style="margin-top: 15px;">
+					    <button class="btn btn-sm btn-success" ng-click="applyTransform(node.data.pos)">Apply</button>
+					</div>				
+					<div class="row">							
+						<div bindonce ng-repeat="v in virtualFunctionsSettings[node.data.pos] track by $index" class="virtualColumn" 
+						     style="margin-bottom: 5px; margin-left: 20px; margin-top: 10px;">							
+								<div>
+									<a href="#" class="btn btn-sm btn-danger"
+									   style="float:left; margin-left: 5px; margin-right: 5px;" 
+									   ng-click="removeVirtualColumn($index)">
+									   <span class="glyphicon glyphicon-trash"></span>
+									</a>  				
+																						   
+									<div bindonce id="func_{{::node.data.id}}_{{ $index }}" class="input-group appendOnLoad" style="width: 825px;"> <!--col-sm-8 -->									          					    								       
+										<select class="form-control tab-node-name"
+											ng-change="composeVirtualColumns(node.data.pos, node.data.id, 'func_'+node.data.id+'_'+$index, $index)"
+											ng-model="virtualFunctionsSettings[node.data.pos][$index]"
+											ng-options="f as f.name for f in virtual_functions track by f.name">
+											<option value="">Select function</option>
+										</select>
+									</div> 
+								 </div>							                                             
+						 </div>						
+						<!-- start form aggiunta virtual -->
+						<div class="row tab-row top-buffer" style="margin-top: 15px !important;">	
+							<div class="col-sm-7 pull-left well" style="margin-bottom: 0px; margin-top: -10px;">
+								<form class="form-inline">
+									<button type="button"									        
+											class="btn btn-success btn-sm" 
+											style="margin-left: 5px; z-index: 100; position: relative;"
+											ng-click="addVirtualColumn(node.data.pos)"
+                                            title="Add column"
+                                            data-toggle="tooltip" data-placement="bottom" tooltip>
+											<span class="glyphicon glyphicon-plus"></span>
+									</button>																										
+							  </form>							  
+							</div>							
+						</div>			
+						<!-- end Form Aggiunta virtual -->						
+					</div>                
+			</div> 		
+			<!-- END VIRTUAL -->
+			<!-- 
+			   schema tab 
+			-->
+			<div class="tab-pane" id="schema-tab">
+                <div ng-if="node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">
+					<ul class="list-inline margin-left-20">
+						<li ng-repeat="property in sortSchemaObj(node.data.schema.m2m_data_schema)">
+							<label class="checkbox" style="padding-right:45px">					
+								<input 
+								    type="checkbox" 
+								    value="{{property.name}}"
+								    ng-model="schemaPropertiesSelected[node.idx][$index]"
+								    ng-change="propagateSourceProperty(node.data.id, node.idx, $index, property)">
+								    {{property.name}}
+								    ({{property.type}})
+							</label>				
+						</li>
+					</ul>					
+                </div>                
+                <div ng-if="!node.data.hasOwnProperty('schema')" class="row tab-row top-buffer">
+                Please specify sensor type in source tab.
+                </div>
+			</div>			
+            <!-- 
+              end schema tab 
+            -->													
+		  </div>
+	  </div>
+	</div>	
+		
+<!--
+---- ARCO
+--->
+	<!-- Dettagli Arco etc -->
+	<div class="navbar workflow-tab" ng-show="showEdgeTab">
+	  <div class="navbar-inner">
+      <ul class="nav nav-tabs">
+        <!--
+          TITOLI DEI TAB
+        -->
+        <li class="active">
+          <a href="#detail-tab" data-toggle="tab" data-step="1">
+				   Edge
+          </a>
+        </li>
+        <li>
+			<button type="button" 
+					class="btn btn-danger btn-sm" 
+					ng-click="deleteEdge(edge)"
+					title="delete"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+			</button>	
+			<button type="button"
+					class="btn btn-primary btn-sm"
+					ng-click="closeEdgeTab()"
+					title="close"
+                                        data-toggle="tooltip" data-placement="bottom" tooltip>
+					<span class="glyphicon glyphicon-remove-circle"></span>
+			</button>        
+        </li>                     
+	  </ul>
+      <!--
+        INIZIO TABs
+      -->
+		  <div id="tab-content" class="tab-content" style="overflow:hidden;">
+
+			<!-- 
+			  Source detail tab 
+			-->
+			<div class="tab-pane active" id="detail-tab">
+					<div class="row">
+						<div class="row tab-row top-buffer">
+							<div class="col-md-4">
+								<h5>Source: {{ source.data().name }}</h5>
+								<h5>Target: {{ target.data().name }}</h5>
+							</div>
+						</div>
+						<div class="row tab-row">
+
+						</div>
+					</div>
+			</div>		
+		</div>
+	  </div>
+	</div>	

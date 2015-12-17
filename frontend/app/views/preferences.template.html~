@@ -1,0 +1,100 @@
+<div class="template-container" style="width: 100%;
+										background: #fff;
+										height: 100%;
+										position: relative;
+										padding-top: 50px;
+										z-index: 100;">
+
+
+	<div class="container-fluid signup-container">
+		<div class="row">
+
+
+        <div class="col-md-3 col-sm-3">
+		</div>
+		<div class="col-md-6 col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Modify your account</h3>
+                </div>
+                <div class="panel-body">
+                    <form role="form" ng-submit="update()" name="updateForm" novalidate>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group has-feedback"
+                                     ng-class="{'has-success': updateForm.first_name.$valid,'has-error': updateForm.first_name.$invalid && updateForm.first_name.$dirty}">
+                                    <input type="text" name="first_name" id="first_name" class="form-control input-sm"
+                                           ng-model="user.name" value="user.name" required>
+                                    <span ng-show="updateForm.first_name.$invalid && updateForm.first_name.$dirty" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                    <span ng-show="updateForm.first_name.$valid" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                                    <p ng-show="updateForm.first_name.$error.required && updateForm.first_name.$dirty"
+                                       class="help-block text-danger">Required parameter.</p>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group has-feedback"
+                                     ng-class="{'has-success': updateForm.last_name.$valid,'has-error': updateForm.last_name.$invalid && updateForm.last_name.$dirty}">
+                                    <input type="text" name="last_name" id="last_name" class="form-control input-sm"
+                                           placeholder="Last Name" ng-model="user.surname" required>
+                                    <span ng-show="updateForm.last_name.$invalid && updateForm.last_name.$dirty" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                                    <span ng-show="updateForm.last_name.$valid" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                                    <p ng-show="updateForm.last_name.$error.required && updateForm.last_name.$dirty"
+                                       class="help-block text-danger">Required parameter.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback"
+                             ng-class="{'has-success': updateForm.email.$valid,'has-error': updateForm.email.$invalid && updateForm.email.$dirty}">
+                            <input type="email"
+									name="email"
+									id="email"
+									class="form-control input-sm"
+                                   placeholder="Email Address"
+                                   ng-model="user.email"
+                                   check-email
+                                   value="{{user.email}}"
+                                   required>
+                            <span ng-show="updateForm.email.$invalid && updateForm.email.$dirty"
+								class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                            <span ng-show="updateForm.email.$valid"
+								class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                            <p ng-show="updateForm.email.$error.checkEmail && updateForm.email.$dirty"
+                               class="help-block text-danger">Email not available.</p>
+                            <span class="form-control-feedback" ng-show="updateForm.email.$pending">
+                                        <i class="fa fa-spinner fa-spin"></i>
+                            </span>
+                            <p ng-show="updateForm.email.$error.required && updateForm.email.$dirty"
+                               class="help-block text-danger">Required parameter.</p>
+                        </div>
+                      <div class="row">
+                        <div class="col-xs-4 col-sm-4 col-md-4">
+                          <input type="submit"
+                               value="Update"
+                               class="btn btn-info btn-block signup-btn"
+                               ng-disabled="updateForm.$invalid">
+                        </div>
+                        <div class="col-xs-4 col-sm-4 col-md-4">
+                          <a href="/home.html"
+                             class="btn btn-info btn-block signup-btn">Cancel</a>
+                        </div>
+                      </div>
+						<div class="form-group top-buffer">
+							<a href="#/security">Change password</a>
+						</div>
+                    </form>
+
+							<div ng-repeat="(key,val) in alerts" class="alert {{key}}" id="login-error">
+								<div ng-repeat="msg in val">{{msg}}</div>
+							</div>
+
+                </div>
+            </div>
+
+        </div>
+		</div>
+
+	</div>
+
+</div>
+
